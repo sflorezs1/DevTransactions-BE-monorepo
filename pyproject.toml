@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "devtransactions-be"
+version = "0.1.0"
+description = ""
+authors = ["Simon Florez <sflorezs1@eafit.edu.co>"]
+license = "GPLv3"
+readme = "README.md"
+packages = [{include = "devtransactions_be"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
