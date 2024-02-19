@@ -71,7 +71,7 @@
         "{workspaceRoot}/reports/user/serve"
       ],
       "options": {
-        "command": "poetry run uvicorn user.hello:app --reload",
+        "command": "poetry run uvicorn src.main:app --reload",
         "cwd": "apps/user"
       }
     }
