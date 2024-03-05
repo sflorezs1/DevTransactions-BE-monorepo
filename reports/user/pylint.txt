@@ -1,0 +1,22 @@
+[1m./alembic/versions/57a3c940a908_initial_migration.py[m[36m:[m4[36m:[m9[36m:[m [1m[31mW291[m trailing whitespace
+[1m./alembic/versions/57a3c940a908_initial_migration.py[m[36m:[m24[36m:[m5[36m:[m [1m[31mE128[m continuation line under-indented for visual indent
+[1m./alembic/versions/57a3c940a908_initial_migration.py[m[36m:[m25[36m:[m5[36m:[m [1m[31mE122[m continuation line missing indentation or outdented
+[1m./alembic/versions/57a3c940a908_initial_migration.py[m[36m:[m26[36m:[m5[36m:[m [1m[31mE122[m continuation line missing indentation or outdented
+[1m./alembic/versions/57a3c940a908_initial_migration.py[m[36m:[m27[36m:[m5[36m:[m [1m[31mE122[m continuation line missing indentation or outdented
+[1m./src/database.py[m[36m:[m63[36m:[m22[36m:[m [1m[31mW292[m no newline at end of file
+[1m./src/main.py[m[36m:[m5[36m:[m1[36m:[m [1m[31mF401[m 'sqlalchemy.ext.declarative.declarative_base' imported but unused
+[1m./src/main.py[m[36m:[m10[36m:[m1[36m:[m [1m[31mF401[m 'src.models' imported but unused
+[1m./src/main.py[m[36m:[m12[36m:[m1[36m:[m [1m[31mE302[m expected 2 blank lines, found 1
+[1m./src/main.py[m[36m:[m30[36m:[m1[36m:[m [1m[31mE302[m expected 2 blank lines, found 1
+[1m./src/models/__init__.py[m[36m:[m3[36m:[m26[36m:[m [1m[31mE261[m at least two spaces before inline comment
+[1m./src/models/__init__.py[m[36m:[m5[36m:[m1[36m:[m [1m[31mF401[m '.user.User' imported but unused
+[1m./src/models/__init__.py[m[36m:[m5[36m:[m1[36m:[m [1m[31mE402[m module level import not at top of file
+[1m./src/models/__init__.py[m[36m:[m5[36m:[m23[36m:[m [1m[31mW292[m no newline at end of file
+[1m./src/models/user.py[m[36m:[m2[36m:[m1[36m:[m [1m[31mF401[m 'sqlalchemy.ext.declarative.declarative_base' imported but unused
+[1m./src/schemas/user_schema.py[m[36m:[m6[36m:[m20[36m:[m [1m[31mW292[m no newline at end of file
+[1m./src/user/__init__.py[m[36m:[m1[36m:[m1[36m:[m [1m[31mF401[m '.user_service.get_user' imported but unused
+[1m./src/user/__init__.py[m[36m:[m1[36m:[m1[36m:[m [1m[31mF401[m '.user_service.create_user' imported but unused
+[1m./src/user/__init__.py[m[36m:[m1[36m:[m48[36m:[m [1m[31mW292[m no newline at end of file
+[1m./src/user/user_service.py[m[36m:[m6[36m:[m1[36m:[m [1m[31mE302[m expected 2 blank lines, found 1
+[1m./src/user/user_service.py[m[36m:[m10[36m:[m1[36m:[m [1m[31mE302[m expected 2 blank lines, found 1
+[1m./src/user/user_service.py[m[36m:[m14[36m:[m1[36m:[m [1m[31mW293[m blank line contains whitespace

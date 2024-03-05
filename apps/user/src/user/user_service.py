@@ -3,7 +3,7 @@ from sqlalchemy.future import select
 from src.models import User
 from src.schemas.user_schema import UserCreate
 
-async def get_user(db: AsyncSession, user_id: int):
+async def get_user(db: AsyncSession, user_id: str):
     result = await db.execute(select(User).filter(User.id == user_id))
     return result.scalars().first()
 

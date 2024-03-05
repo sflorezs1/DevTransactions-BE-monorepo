@@ -1,5 +1,6 @@
+import uuid
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.dialects import postgresql
 
 from . import Base
 
@@ -7,6 +8,6 @@ from . import Base
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
+    id = Column(postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = Column(String)
     email = Column(String, unique=True, index=True)
