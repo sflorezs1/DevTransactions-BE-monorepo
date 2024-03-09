@@ -1,14 +1,14 @@
 {
-  "name": "user",
+  "name": "ms_tools",
   "$schema": "../node_modules/nx/schemas/project-schema.json",
-  "projectType": "application",
-  "sourceRoot": "user/user",
+  "projectType": "library",
+  "sourceRoot": "ms_tools/src",
   "targets": {
     "lock": {
       "executor": "@nxlv/python:run-commands",
       "options": {
         "command": "poetry lock --no-update",
-        "cwd": "{projectRoot}/apps/user"
+        "cwd": "libs/ms_tools"
       }
     },
     "add": {
@@ -29,7 +29,7 @@
         "{projectRoot}/dist"
       ],
       "options": {
-        "outputPath": "user/dist",
+        "outputPath": "ms_tools/dist",
         "publish": false,
         "lockedVersions": true,
         "bundleLocalDependencies": true
@@ -48,31 +48,21 @@
     "lint": {
       "executor": "@nxlv/python:flake8",
       "outputs": [
-        "{workspaceRoot}/reports/user/pylint.txt"
+        "{workspaceRoot}/reports/ms_tools/pylint.txt"
       ],
       "options": {
-        "outputFile": "reports/user/pylint.txt"
+        "outputFile": "reports/ms_tools/pylint.txt"
       }
     },
     "test": {
       "executor": "@nxlv/python:run-commands",
       "outputs": [
-        "{workspaceRoot}/reports/user/unittests",
-        "{workspaceRoot}/coverage/user"
+        "{workspaceRoot}/reports/ms_tools/unittests",
+        "{workspaceRoot}/coverage/ms_tools"
       ],
       "options": {
         "command": "poetry run pytest tests/",
-        "cwd": "apps/user"
-      }
-    },
-    "start": {
-      "executor": "@nxlv/python:run-commands",
-      "outputs": [
-        "{workspaceRoot}/reports/user/serve"
-      ],
-      "options": {
-        "command": "poetry run src/main.py",
-        "cwd": "apps/user"
+        "cwd": "libs/ms_tools"
       }
     }
   },

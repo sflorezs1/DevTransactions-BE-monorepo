@@ -1,0 +1,41 @@
+[tool.nx]
+autoActivate = true
+
+[tool.poetry]
+name = "dev-transactions-be-monorepo"
+version = "1.0.0"
+description = ""
+authors = [ ]
+license = "Proprietary"
+readme = "README.md"
+
+  [tool.poetry.dependencies]
+  python = "^3.12"
+
+    [tool.poetry.dependencies.document]
+    path = "apps/document"
+    develop = true
+
+    [tool.poetry.dependencies.user]
+    path = "apps/user"
+    develop = true
+
+    [tool.poetry.dependencies.document_storage]
+    path = "libs/document_storage"
+    develop = true
+
+    [tool.poetry.dependencies.microservices]
+    path = "libs/microservices"
+    develop = true
+
+    [tool.poetry.dependencies.ms_tools]
+    path = "libs/ms_tools"
+    develop = true
+
+    [tool.poetry.dependencies.secrets]
+    path = "libs/secrets"
+    develop = true
+
+[build-system]
+requires = [ "poetry-core==1.1.0" ]
+build-backend = "poetry.core.masonry.api"
