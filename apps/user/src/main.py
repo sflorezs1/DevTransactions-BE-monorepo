@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.user import User
-from ms_tools import Hoppy, SQLAlchemyAdapter, MessageQueues, Event
+from libs.ms_tools import Hoppy, SQLAlchemyAdapter, MessageQueues, Event
 
 db_adapter = SQLAlchemyAdapter('your-database-url') 
 app = Hoppy('User', rabbitmq_host='localhost', rabbitmq_port=5672, database_adapter=db_adapter)

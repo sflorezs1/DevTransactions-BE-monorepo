@@ -2,12 +2,6 @@ from enum import Enum
 import pika
 import json
 from typing import Any, Callable
-
-
-from enum import Enum
-import pika
-import json
-from typing import Any, Callable
 from .queues import MessageQueues
 
 
@@ -17,11 +11,11 @@ def get_rabbitmq_connection(
     credentials: tuple[str, str] | None = None
 ) -> pika.BlockingConnection:
     """Establish a connection to a RabbitMQ server."""
-    if credentials: 
-        credentials = pika.PlainCredentials(*credentials)
+    if credentials is None:
+        credentials = pika.PlainCredentials('guest', 'guest')
     else:
-        credentials = None
-
+        credentials = pika.PlainCredentials(*credentials)
+        
     connection = pika.BlockingConnection(
         pika.ConnectionParameters(host=host, port=port, credentials=credentials)
     )

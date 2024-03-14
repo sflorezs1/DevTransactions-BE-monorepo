@@ -1,10 +1,12 @@
 import asyncio
+import json
 from typing import Callable
 import pika
 from sqlalchemy.ext.asyncio import AsyncSession
 from .events import Event
 from .database import DatabaseAdapter
 from .queues import MessageQueues
+
 
 
 class Hoppy:
