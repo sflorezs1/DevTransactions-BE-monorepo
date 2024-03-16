@@ -20,21 +20,16 @@ readme = "README.md"
     path = "apps/user"
     develop = true
 
-    [tool.poetry.dependencies.document_storage]
-    path = "libs/document_storage"
+    [tool.poetry.dependencies.hoppy]
+    path = "libs/hoppy"
     develop = true
 
-    [tool.poetry.dependencies.microservices]
-    path = "libs/microservices"
-    develop = true
-
-    [tool.poetry.dependencies.ms_tools]
-    path = "libs/ms_tools"
-    develop = true
-
-    [tool.poetry.dependencies.secrets]
-    path = "libs/secrets"
-    develop = true
+[tool.poetry.group.dev.dependencies]
+flake8 = "6.0.0"
+autopep8 = "2.0.2"
+pytest = "7.3.1"
+pytest-sugar = "0.9.7"
+pytest-html = "3.2.0"
 
 [build-system]
 requires = [ "poetry-core==1.1.0" ]

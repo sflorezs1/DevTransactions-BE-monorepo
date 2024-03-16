@@ -14,18 +14,9 @@ def setup():
         port = 5672,
     )
 
-    # SQLAlchemyParams declaration with default values
-    sqlalchemy_params = SQLAlchemyParams(
-        username = "postgres",
-        password = "postgres",
-        host = "localhost",
-        port = 5432,
-        database = "dt_user",
-    )
-
     # Create the Hoppy instance
     global app
-    app = Hoppy(pika_params, sqlalchemy_params)
+    app = Hoppy(pika_params)
 
 def setup_logging():
     # Set the logging level for the root logger to DEBUG
@@ -48,9 +39,8 @@ def setup_logging():
 
 def register_consumers():
     # Register the consumer for the user creation event
-    @app.consume(Queues.REGISTER_USER)
+    @app.consume(Queues.REGISTER_CITIZEN)
     async def handle_user_creation(event: Event, context: Context):
-        logger.info(f"Received user creation event: {event.raw_body}")
         logger.info(f"Received user creation event: {event.body}")
         user_data = event.body   # type: RegisterUserPayload
         db = context.session
