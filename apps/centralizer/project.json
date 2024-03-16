@@ -1,14 +1,14 @@
 {
-  "name": "user",
+  "name": "centralizer",
   "$schema": "../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "sourceRoot": "user/user",
+  "sourceRoot": "centralizer/centralizer",
   "targets": {
     "lock": {
       "executor": "@nxlv/python:run-commands",
       "options": {
         "command": "poetry lock --no-update",
-        "cwd": "{projectRoot}/apps/user"
+        "cwd": "{projectRoot}/apps/centralizer"
       }
     },
     "add": {
@@ -29,7 +29,7 @@
         "{projectRoot}/dist"
       ],
       "options": {
-        "outputPath": "user/dist",
+        "outputPath": "centralizer/dist",
         "publish": false,
         "lockedVersions": true,
         "bundleLocalDependencies": true
@@ -48,31 +48,31 @@
     "lint": {
       "executor": "@nxlv/python:flake8",
       "outputs": [
-        "{workspaceRoot}/reports/user/pylint.txt"
+        "{workspaceRoot}/reports/centralizer/pylint.txt"
       ],
       "options": {
-        "outputFile": "reports/user/pylint.txt"
+        "outputFile": "reports/centralizer/pylint.txt"
       }
     },
     "test": {
       "executor": "@nxlv/python:run-commands",
       "outputs": [
-        "{workspaceRoot}/reports/user/unittests",
-        "{workspaceRoot}/coverage/user"
+        "{workspaceRoot}/reports/centralizer/unittests",
+        "{workspaceRoot}/coverage/centralizer"
       ],
       "options": {
         "command": "poetry run pytest tests/",
-        "cwd": "apps/user"
+        "cwd": "apps/centralizer"
       }
     },
     "start": {
       "executor": "@nxlv/python:run-commands",
       "outputs": [
-        "{workspaceRoot}/reports/user/serve"
+        "{workspaceRoot}/reports/centralizer/serve"
       ],
       "options": {
         "command": "poetry run start",
-        "cwd": "apps/user"
+        "cwd": "apps/centralizer"
       }
     }
   },

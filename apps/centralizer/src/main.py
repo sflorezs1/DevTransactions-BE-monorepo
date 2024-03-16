@@ -1,7 +1,6 @@
 import asyncio
 import logging
 
-from src.models.user import User
 from hoppy import Hoppy, SQLAlchemyParams, PikaParams, Event, Queues, RegisterUserPayload, Context
 
 
@@ -40,16 +39,11 @@ def setup_logging():
 def register_consumers():
     # Register the consumer for the user creation event
     @app.consume(Queues.REGISTER_CITIZEN)
-    async def handle_user_creation(event: Event, context: Context):
+    async def handle_citizen_registration(event: Event, context: Context):
         logger.info(f"Received user creation event: {event.body}")
         user_data = event.body   # type: RegisterUserPayload
-        db = context.session
-
-        new_user = User(**user_data)
-        db.add(new_user)
-        await db.commit()
-
-        logger.info(f"Created new user with ID")
+        
+        logger.info(f"User data: {user_data}")
 
 def start():
     setup()

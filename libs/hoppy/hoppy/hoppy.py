@@ -4,7 +4,7 @@ import json
 import logging
 import queue
 import ssl
-from typing import Any, Callable, Optional, Type
+from typing import Any, Callable, NamedTuple, Optional, Type
 from urllib.parse import quote
 import aio_pika
 import aiormq
@@ -127,7 +127,8 @@ class Hoppy:
                 logger.error(f"Error processing message from queue {message.routing_key}: {e}")
                 await message.nack()
             finally:
-                await session.close()
+                if session:
+                    await session.close()
         
         logger.info("Connecting and starting consumption...")
 
@@ -148,6 +149,24 @@ class Hoppy:
                 except Exception as e:
                     logger.error(f"Error declaring queue {queue_name}: {e}")
 
+    async def send_message(self, queue: Queues, message_body):
+        # Create a connection using aio_pika
+        connection = await aio_pika.connect_robust(self.connection_params.to_url())
+
+        async with connection:
+            # Creating a channel
+            channel = await connection.channel()
+
+            # Declare a queue
+            queue = await channel.declare_queue(queue.value, durable=False)
+
+            # Send the message
+            await channel.default_exchange.publish(
+                aio_pika.Message(body=json.dumps(message_body).encode()),
+                routing_key=queue.name,
+            )
+
+        logger.info(f"Sent message to queue {queue.name}")
 
     def run(self):
         logger.info("Starting Hoppy...")

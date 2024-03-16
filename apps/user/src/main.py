@@ -48,18 +48,11 @@ def setup_logging():
 
 def register_consumers():
     # Register the consumer for the user creation event
-    @app.consume(Queues.REGISTER_USER)
+    @app.consume(Queues.START_USER_REGISTER)
     async def handle_user_creation(event: Event, context: Context):
-        logger.info(f"Received user creation event: {event.raw_body}")
         logger.info(f"Received user creation event: {event.body}")
         user_data = event.body   # type: RegisterUserPayload
-        db = context.session
-
-        new_user = User(**user_data)
-        db.add(new_user)
-        await db.commit()
-
-        logger.info(f"Created new user with ID")
+        await app.send_message(Queues.REQUESTS_QUEUE, user_data)
 
 def start():
     setup()
