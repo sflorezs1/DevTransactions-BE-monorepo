@@ -56,6 +56,10 @@ jobs:
         with:
           cluster_name: ${{ env.GKE_CLUSTER }}
           location: ${{ env.GKE_REGION }}
+
+      - name: Install Nx
+        run: npm install -g nx
+
       - name: Install
         run: |
           cd apps/user_bridge && nx run user_bridge:build
