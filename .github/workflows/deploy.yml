@@ -132,6 +132,11 @@ jobs:
           done
 
 
+      - name: Set Google Application Credentials
+        run: |
+          echo "::set-env name=GOOGLE_APPLICATION_CREDENTIALS::${{ runner.workspace }}/gcloud-credentials.json"
+
+
       - name: Deploy
         run: |
           for app in $(ls apps/); do
