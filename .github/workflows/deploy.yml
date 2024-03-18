@@ -21,7 +21,7 @@ env:
   GAR_LOCATION: us-central1
   GKE_CLUSTER: cluster-1
   GKE_ZONE: us-central1-a
-  GKE_REGION: us-central1
+  GKE_REGION: us-central1-a
   DEPLOYMENT_NAME: gke-be
   REPOSITORY: devtrasactions-artifacts
   IMAGE: static-site
