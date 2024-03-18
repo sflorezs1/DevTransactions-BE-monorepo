@@ -137,6 +137,14 @@ jobs:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
           project_id: ${{ env.PROJECT_ID }}
 
+      - name: Set the kubectl context
+        run: |
+          gcloud container clusters get-credentials ${{ env.GKE_CLUSTER }} --zone ${{ env.GKE_ZONE }} --project ${{ env.PROJECT_ID }}
+
+      - name: List kubectl contexts
+        run: kubectl config get-contexts
+
+
       - name: Verify kubectl context
         run: |
           kubectl config get-contexts
