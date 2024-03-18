@@ -138,7 +138,10 @@ jobs:
           project_id: ${{ env.PROJECT_ID }}
           
       - name: Install GKE gcloud auth plugin
-        run: gcloud components install gke-gcloud-auth-plugin
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-cloud-cli-gke-gcloud-auth-plugin
+
 
 
       - name: Set the kubectl context
