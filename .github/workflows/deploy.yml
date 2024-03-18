@@ -103,8 +103,8 @@ jobs:
             docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$app:$GITHUB_SHA"
           done
 
-            - name: Generate Kubernetes Deployment Manifests
-              run: |
+      - name: Generate Kubernetes Deployment Manifests
+        run: |
                 for app in $(ls apps/); do
                   mkdir -p apps/$app/k8s
                   echo "apiVersion: apps/v1" > apps/$app/k8s/deployment.yaml
@@ -131,17 +131,18 @@ jobs:
                   echo "        - containerPort: 80" >> apps/$app/k8s/deployment.yaml
                 done
       
-            - name: Authenticate with GKE
-              uses: google-github-actions/auth@v2.1.2
-              with:
-                credentials_json: ${{ secrets.GCP_SA_KEY }}
-                project_id: ${{ env.PROJECT_ID }}
+      - name: Authenticate with GKE
+        uses: google-github-actions/auth@v2.1.2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ env.PROJECT_ID }}
       
-            - name: Apply Kubernetes Deployment Manifests
-              run: |
-                for app in $(ls apps/); do
-                  kubectl apply -f apps/$app/k8s/deployment.yaml --record
-                done
+      - name: Apply Kubernetes Deployment Manifests
+        run: |
+          for app in $(ls apps/); do
+            kubectl apply -f apps/$app/k8s/deployment.yaml --record
+          done      
+              
 
 
 
