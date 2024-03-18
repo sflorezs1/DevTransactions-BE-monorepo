@@ -63,6 +63,10 @@ jobs:
       - name: Install Nx
         run: npm ci
 
+      - name: Install Poetry
+        run: pip install poetry
+
+
       - name: Install
         run: |
           cd apps/user_bridge && nx run user_bridge:build
