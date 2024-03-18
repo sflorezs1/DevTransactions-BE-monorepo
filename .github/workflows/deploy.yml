@@ -103,6 +103,46 @@ jobs:
             docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$app:$GITHUB_SHA"
           done
 
+      - name: Generate Kubernetes Deployment Manifests
+        run: |
+                for app in $(ls apps/); do
+                  mkdir -p apps/$app/k8s
+                  echo "apiVersion: apps/v1" > apps/$app/k8s/deployment.yaml
+                  echo "kind: Deployment" >> apps/$app/k8s/deployment.yaml
+                  echo "metadata:" >> apps/$app/k8s/deployment.yaml
+                  echo "  name: $app-deployment" >> apps/$app/k8s/deployment.yaml
+                  echo "  labels:" >> apps/$app/k8s/deployment.yaml
+                  echo "    app: $app" >> apps/$app/k8s/deployment.yaml
+                  echo "spec:" >> apps/$app/k8s/deployment.yaml
+                  echo "  replicas: 3" >> apps/$app/k8s/deployment.yaml
+                  echo "  selector:" >> apps/$app/k8s/deployment.yaml
+                  echo "    matchLabels:" >> apps/$app/k8s/deployment.yaml
+                  echo "      app: $app" >> apps/$app/k8s/deployment.yaml
+                  echo "  template:" >> apps/$app/k8s/deployment.yaml
+                  echo "    metadata:" >> apps/$app/k8s/deployment.yaml
+                  echo "      labels:" >> apps/$app/k8s/deployment.yaml
+                  echo "        app: $app" >> apps/$app/k8s/deployment.yaml
+                  echo "    spec:" >> apps/$app/k8s/deployment.yaml
+                  echo "      serviceAccountName: terraform-user" >> apps/$app/k8s/deployment.yaml
+                  echo "      containers:" >> apps/$app/k8s/deployment.yaml
+                  echo "      - name: $app-container" >> apps/$app/k8s/deployment.yaml
+                  echo "        image: IMAGE_URL_PLACEHOLDER  # This placeholder will be replaced" >> apps/$app/k8s/deployment.yaml
+                  echo "        ports:" >> apps/$app/k8s/deployment.yaml
+                  echo "        - containerPort: 80" >> apps/$app/k8s/deployment.yaml
+                done
+      
+      - name: Authenticate with GKE
+        uses: google-github-actions/auth@v2.1.2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ env.PROJECT_ID }}
+      
+      - name: Apply Kubernetes Deployment Manifests
+        run: |
+          for app in $(ls apps/); do
+            kubectl apply -f apps/$app/k8s/deployment.yaml --record
+          done   
+
               
 
 
