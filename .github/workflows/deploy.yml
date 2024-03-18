@@ -131,16 +131,16 @@ jobs:
                   echo "        - containerPort: 80" >> apps/$app/k8s/deployment.yaml
                 done
       
-      - name: Authenticate with GKE
-        uses: google-github-actions/auth@v2.1.2
+      - name: Setup GCloud SDK
+        uses: google-github-actions/setup-gcloud@master
         with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          version: 'latest'
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
           project_id: ${{ env.PROJECT_ID }}
-          
-      - name: Install GKE gcloud auth plugin
+      
+      - name: Install kubectl
         run: |
-          sudo apt-get update
-          sudo apt-get install -y google-cloud-cli-gke-gcloud-auth-plugin
+          gcloud components install kubectl
 
 
 
