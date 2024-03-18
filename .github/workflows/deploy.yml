@@ -138,9 +138,17 @@ jobs:
           for app in $(ls apps/); do
             # Replace the placeholder with the actual image URI
             IMAGE_URL="$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$app:$GITHUB_SHA"
-             sed -i "s/IMAGE_URL_PLACEHOLDER/$IMAGE_URL/g" apps/$app/k8s/deployment.yaml
-      
-            # Deploy the deployment YAML file to GKE
+            
+            # Create a temporary file
+            TMP_FILE="/tmp/deployment.yaml.$RANDOM"
+            
+            # Use sed on the temporary file
+            sed "s/IMAGE_URL_PLACEHOLDER/$IMAGE_URL/g" apps/$app/k8s/deployment.yaml > "$TMP_FILE"
+            
+            # Move the temporary file over the original
+            mv "$TMP_FILE" apps/$app/k8s/deployment.yaml
+            
+            # Deploy the deployment YAML file to GKE (uncomment these lines)
             kubectl apply -f apps/$app/k8s/deployment.yaml
           done
 
