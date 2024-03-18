@@ -29,7 +29,7 @@
         "{projectRoot}/dist"
       ],
       "options": {
-        "outputPath": "hoppy/dist",
+        "outputPath": "apps/hoppy/dist",
         "publish": false,
         "lockedVersions": true,
         "bundleLocalDependencies": true

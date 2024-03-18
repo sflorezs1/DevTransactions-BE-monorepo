@@ -23,9 +23,12 @@ group = { }
 
   [tool.poetry.dependencies]
   python = "^3.12"
-  uvicorn = {extras = ["standard"], version = "^0.28.0"}
   pika = "^1.3.2"
   fastapi = "^0.110.0"
+
+    [tool.poetry.dependencies.uvicorn]
+    extras = [ "standard" ]
+    version = "^0.28.0"
 
     [tool.poetry.dependencies.pydantic]
     extras = [ "email" ]
@@ -33,6 +36,10 @@ group = { }
 
     [tool.poetry.dependencies.hoppy]
     path = "../../libs/hoppy"
+    develop = true
+
+    [tool.poetry.dependencies.secret]
+    path = "../../libs/secret"
     develop = true
 
   [tool.poetry.scripts]

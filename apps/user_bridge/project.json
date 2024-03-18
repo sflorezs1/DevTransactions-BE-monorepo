@@ -29,7 +29,7 @@
         "{projectRoot}/dist"
       ],
       "options": {
-        "outputPath": "user_bridge/dist",
+        "outputPath": "apps/user_bridge/dist",
         "publish": false,
         "lockedVersions": true,
         "bundleLocalDependencies": true

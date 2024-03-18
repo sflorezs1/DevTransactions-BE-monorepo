@@ -1,11 +1,13 @@
 from ast import Dict
 import asyncio
+from asyncio import tasks
 from dataclasses import asdict, dataclass, is_dataclass
 from email import message
 import json
 import logging
 import queue
 import ssl
+import time
 from typing import Any, Callable, NamedTuple, Optional, Type, Union
 from urllib.parse import quote
 import uuid
@@ -153,7 +155,7 @@ class Hoppy:
 
     async def _connect_and_consume(self):
         async def callback(message: aiormq.spec.Basic.Deliver):
-            self._callback(message, self.consumers[message.routing_key])
+            await self._callback(message, self.consumers[message.routing_key])
         
         logger.info("Connecting and starting consumption...")
 
@@ -162,7 +164,7 @@ class Hoppy:
 
         channel = await self.connection.channel()
 
-        for queue_name, handler in self.consumers.items():
+        async def handle_queue(queue_name, handler):
             try:
                 logger.info(f"Declare queue {queue_name}")
                 queue = await channel.declare_queue(queue_name, durable=False)
@@ -171,6 +173,15 @@ class Hoppy:
                         await callback(message)
             except Exception as e:
                 logger.error(f"Error declaring queue {queue_name}: {e}")
+
+        tasks = []
+
+        for queue_name, handler in self.consumers.items():
+            # Create a new task for each queue
+            task = asyncio.create_task(handle_queue(queue_name, handler))
+            tasks.append(task)
+
+        await asyncio.gather(*tasks)
         
         await self.disconnect()
 
@@ -181,17 +192,19 @@ class Hoppy:
 
         reply_queue_name = None
 
+        queue = queue.value if isinstance(queue, Queues) else queue
+
         # Creating a channel
         channel = await self.connection.channel()
 
         # Declare a queue
-        queue = await channel.declare_queue(queue.value, durable=False)
+        queue = await channel.declare_queue(queue, durable=False)
 
         body = asdict(message_body) if is_dataclass(message_body) else message_body
         # Create a reply queue if requested
         if create_reply_queue:
             reply_queue_name = str(uuid.uuid4())
-            reply_queue = await channel.declare_queue(reply_queue_name, auto_delete=True)
+            reply_queue = await channel.declare_queue(reply_queue_name, auto_delete=True, timeout=30)
             body = { **message_body, "reply_to": reply_queue_name }
 
         # Send the message
@@ -240,6 +253,8 @@ class Hoppy:
 
         return response
 
-    def run(self, loop: asyncio.AbstractEventLoop):
+    def run(self):
         logger.info("Starting Hoppy...")
+        loop = asyncio.get_event_loop()
         loop.run_until_complete(self._connect_and_consume())
+        loop.run_forever()

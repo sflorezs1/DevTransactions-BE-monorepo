@@ -49,6 +49,9 @@ class RegisterUser(BaseModel):
     operator_id: str
     operator_name: str
 
+class CompleteRegister(BaseModel):
+    email: EmailStr
+    password: str
 
 @api.post("/user/start_register")
 async def start_register(user: RegisterUser):
@@ -57,8 +60,16 @@ async def start_register(user: RegisterUser):
         response = await app.consume_once_and_destroy(reply_queue)
     return response
 
+@api.post("/user/complete_register")
+async def start_register(info: CompleteRegister):
+    async with app:
+        reply_queue = await app.send_message(Queues.CREATE_USER_PASSWORD, info.model_dump(), True)
+        response = await app.consume_once_and_destroy(reply_queue)
+    return response
+
 def start():
     setup()
     setup_logging()
     # Start the consumption
     uvicorn.run(api, host="localhost", port=8000)
+    
