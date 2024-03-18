@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 import json
 import logging
-from tkinter import SE
 from aio_pika import IncomingMessage
 from aio_pika.abc import AbstractIncomingMessage
 from typing import Generic, TypeVar, Union

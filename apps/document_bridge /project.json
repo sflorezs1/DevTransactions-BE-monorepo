@@ -1,0 +1,80 @@
+{
+  "name": "document_bridge",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "document_bridge/document_bridge",
+  "targets": {
+    "lock": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry lock --no-update",
+        "cwd": "{projectRoot}/apps/document_bridge"
+      }
+    },
+    "add": {
+      "executor": "@nxlv/python:add",
+      "options": {}
+    },
+    "update": {
+      "executor": "@nxlv/python:update",
+      "options": {}
+    },
+    "remove": {
+      "executor": "@nxlv/python:remove",
+      "options": {}
+    },
+    "build": {
+      "executor": "@nxlv/python:build",
+      "outputs": [
+        "{projectRoot}/dist"
+      ],
+      "options": {
+        "outputPath": "document_bridge/dist",
+        "publish": false,
+        "lockedVersions": true,
+        "bundleLocalDependencies": true
+      }
+    },
+    "install": {
+      "executor": "@nxlv/python:install",
+      "options": {
+        "silent": false,
+        "args": "",
+        "cacheDir": ".cache/pypoetry",
+        "verbose": false,
+        "debug": false
+      }
+    },
+    "lint": {
+      "executor": "@nxlv/python:flake8",
+      "outputs": [
+        "{workspaceRoot}/reports/document_bridge/pylint.txt"
+      ],
+      "options": {
+        "outputFile": "reports/document_bridge/pylint.txt"
+      }
+    },
+    "test": {
+      "executor": "@nxlv/python:run-commands",
+      "outputs": [
+        "{workspaceRoot}/reports/document_bridge/unittests",
+        "{workspaceRoot}/coverage/document_bridge"
+      ],
+      "options": {
+        "command": "poetry run pytest tests/",
+        "cwd": "apps/document_bridge"
+      }
+    },
+    "start": {
+      "executor": "@nxlv/python:run-commands",
+      "outputs": [
+        "{workspaceRoot}/reports/document_bridge/serve"
+      ],
+      "options": {
+        "command": "poetry run start",
+        "cwd": "apps/document_bridge"
+      }
+    }
+  },
+  "tags": []
+}
