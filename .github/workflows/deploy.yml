@@ -18,9 +18,9 @@ on:
 
 env:
   PROJECT_ID: sound-machine-399502
-  GAR_LOCATION: us-central1-a
+  GAR_LOCATION: us-central1
   GKE_CLUSTER: cluster-1
-  GKE_ZONE: us-central1
+  GKE_ZONE: us-central1-a
   GKE_REGION: us-central1
   DEPLOYMENT_NAME: gke-be
   REPOSITORY: devtrasactions-artifacts
