@@ -18,7 +18,7 @@ on:
 
 env:
   PROJECT_ID: sound-machine-399502
-  GAR_LOCATION: us-central1
+  GAR_LOCATION: us-central1-a
   GKE_CLUSTER: cluster-1
   GKE_ZONE: us-central1
   GKE_REGION: us-central1
