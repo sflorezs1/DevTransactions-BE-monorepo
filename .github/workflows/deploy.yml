@@ -88,9 +88,9 @@ jobs:
           for app in $(ls apps/); do
             echo "Generating Dockerfile for: $app"
             dockerfile_path="apps/$app/Dockerfile"  # Path to Dockerfile
-            echo "COPY apps/user_bridge/dist /app"
             echo 'FROM python:3.12-slim' >> $dockerfile_path
-            echo "WORKDIR /app" >> $dockerfile_path 
+            echo "WORKDIR /app" >> $dockerfile_path
+            echo "COPY apps/user_bridge/dist/user_bridge-1.0.0.tar.gz /app/" >> $dockerfile_path
             echo "RUN pip install poetry" >> $dockerfile_path
             echo "RUN tar -xf user_bridge-1.0.0.tar.gz && rm user_bridge-1.0.0.tar.gz" >> $dockerfile_path
             echo "WORKDIR /app/user_bridge-1.0.0" >> $dockerfile_path
@@ -102,3 +102,4 @@ jobs:
             docker build --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$app:$GITHUB_SHA" --build-arg GITHUB_SHA="$GITHUB_SHA" --build-arg GITHUB_REF="$GITHUB_REF" --file apps/$app/Dockerfile .
             docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$app:$GITHUB_SHA"
           done
+
