@@ -140,7 +140,7 @@ jobs:
       - name: Apply Kubernetes Deployment Manifests
         run: |
           for app in $(ls apps/); do
-            kubectl apply -f apps/$app/k8s/deployment.yaml --record
+            kubectl apply -f apps/$app/k8s/deployment.yaml --validate=false
           done   
 
               
