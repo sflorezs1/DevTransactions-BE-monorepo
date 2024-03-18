@@ -136,6 +136,11 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
           project_id: ${{ env.PROJECT_ID }}
+
+      - name: Verify kubectl context
+        run: |
+          kubectl config get-contexts
+          kubectl config current-context
       
       - name: Apply Kubernetes Deployment Manifests
         run: |
