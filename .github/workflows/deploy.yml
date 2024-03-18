@@ -135,18 +135,22 @@ jobs:
       - name: Deploy
         run: |
           for app in $(ls apps/); do
-            # Authenticate with GCP and get the cluster credentials
-            gcloud auth activate-service-account --key-file=${{ secrets.GCP_SA_KEY }}
-            gcloud container clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $PROJECT_ID
-      
-            # Replace the image URL placeholder with the actual image URL constructed from the build and publish steps
-            image_url="us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/$app:${{ github.sha }}"
-            echo "IMAGE_URL=$image_url"
-            sed -i "s|IMAGE_URL_PLACEHOLDER|$image_url|g" apps/$app/k8s/deployment.yaml
-            
-            # Apply the Kubernetes manifests
-            kubectl apply -f apps/$app/k8s/deployment.yaml
-            # Wait for the deployment to be fully rolled out
-            kubectl rollout status deployment/$app-deployment
+          # Authenticate with GCP and get the cluster credentials
+          gcloud auth activate-service-account --key-file=${{ secrets.GCP_SA_KEY_PATH }}
+          gcloud container clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $PROJECT_ID
+        
+          # Construct the image URL from environment variables and the commit SHA
+          image_url="us-central1-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$app:${GITHUB_SHA}"
+          echo "IMAGE_URL=$image_url"
+          
+          # Replace the image URL placeholder in the Kubernetes deployment manifest
+          sed -i "s|IMAGE_URL_PLACEHOLDER|$image_url|g" apps/$app/k8s/deployment.yaml
+          
+          # Apply the Kubernetes manifest
+          kubectl apply -f apps/$app/k8s/deployment.yaml
+          
+          # Wait for the deployment to fully roll out
+          kubectl rollout status deployment/$app-deployment
           done
+
 
