@@ -103,3 +103,17 @@ jobs:
             docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$app:$GITHUB_SHA"
           done
 
+      - name: Deploy
+        run: |
+          for app in $(ls apps/); do
+            # Replace the image URL placeholder with the actual image URL constructed from the build and publish steps
+            image_url="us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/$app:${{ github.sha }}"
+            echo "IMAGE_URL=$image_url"
+            sed -i "s|IMAGE_URL_PLACEHOLDER|$image_url|g" apps/$app/k8s/deployment.yaml
+            
+            # Apply the Kubernetes manifests
+            kubectl apply -f apps/$app/k8s/deployment.yaml
+            # Wait for the deployment to be fully rolled out
+            kubectl rollout status deployment/$app-deployment
+          done
+
