@@ -131,23 +131,6 @@ jobs:
             echo "        - containerPort: 80" >> apps/$app/k8s/deployment.yaml
           done
 
-      - name: Create Service Account Key File
-        run: |
-          echo "$GCP_SA_KEY" > gcp-sa-key.json
-          ls -l gcp-sa-key.json  # This line is for debugging purposes.
-        env:
-          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
-      
-      - name: Authenticate with GCP
-        run: gcloud auth activate-service-account --key-file=gcp-sa-key.json
-      
-      - name: Get GKE credentials
-        run: gcloud container clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $PROJECT_ID
-        env:
-          GKE_CLUSTER: cluster-1  # replace with your cluster's name
-          GKE_ZONE: us-central1-a    # replace with your cluster's zone
-          PROJECT_ID: sound-machine-399502
-
 
       - name: Deploy
         run: |
