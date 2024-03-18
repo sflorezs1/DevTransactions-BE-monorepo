@@ -60,6 +60,9 @@ jobs:
       - name: Install Nx
         run: npm install -g nx
 
+      - name: Install Nx
+        run: npm ci
+
       - name: Install
         run: |
           cd apps/user_bridge && nx run user_bridge:build
