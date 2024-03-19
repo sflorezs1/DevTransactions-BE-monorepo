@@ -11,6 +11,18 @@ app = Hoppy(pika_params)
 logger = logging.getLogger(__name__)
 api = FastAPI()
 
+def setup():
+    # PikaParams declaration with default values
+    pika_params = PikaParams(
+        host = "localhost",
+        port = 5672,
+    )
+
+    # Create the Hoppy instance
+    global app
+    app = Hoppy(pika_params)
+
+
 def setup_logging():
     # Set the logging level for the root logger to DEBUG
     logging.getLogger().setLevel(logging.DEBUG)
@@ -49,8 +61,7 @@ async def upload_document_info(documentinfo=DocumentInfo):
     return {"message": f"Información del documento enviada a la cola"}
 
 def start():
+    setup()
     setup_logging()
     uvicorn.run(api, host="localhost", port=8000)
-
-
-
+ 

@@ -1,47 +1,76 @@
-from typing import Annotated, List
-from fastapi import FastAPI, Depends, HTTPException
-from fastapi.concurrency import asynccontextmanager
+import logging
+import json
+from hoppy import Hoppy, PikaParams, Queues
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.ext.declarative import declarative_base
-from src.database import get_db_session, sessionmanager
-from src.schemas import DocumentBase, DocumentCreate
-import src.document.document_service as document_crud
+from src.database import sessionmanager,DATABASE_URL
+from src.models import Document 
 
-import src.models
+logger = logging.getLogger(__name__)
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
+def setup():
+    # PikaParams declaration with default values
+    pika_params = PikaParams(
+        host = "localhost",
+        port = 5672,
+    )
+
+    # Create the Hoppy instance
+    global app
+    app = Hoppy(pika_params)
+
+def setup_logging():
+    # Set the logging level for the root logger to DEBUG
+    logging.getLogger().setLevel(logging.DEBUG)
+
+    # Create a console handler
+    console_handler = logging.StreamHandler()
+
+    # Set the console handler's level to DEBUG
+    console_handler.setLevel(logging.DEBUG)
+
+    # Create a formatter
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+    # Set the console handler's formatter
+    console_handler.setFormatter(formatter)
+
+    # Add the console handler to the root logger
+    logging.getLogger().addHandler(console_handler)
+
+@app.consume(Queues.DOCUMENTS_QUEUE)
+def process_document_info(message):
     """
-    Function that handles startup and shutdown events.
-    To understand more, read https://fastapi.tiangolo.com/advanced/events/
+    Consume el mensaje de la cola y procesa la información del documento
     """
-    yield
-    if sessionmanager._engine is not None:
-        # Close the DB connection
-        await sessionmanager.close()
+    try:
+        # Convierte la información recibida a JSON
+        document_info = json.loads(message.body)
 
-app = FastAPI(lifespan=lifespan)
+        # Crea una sesión con la base de datos 
+        session = Session()
 
-@app.post("/documents/", response_model=DocumentBase)
-async def create_document(document_data: DocumentCreate, db: AsyncSession = Depends(get_db_session)):
-    return await document_crud.create(document_data, db)
+        # Crea una instancia del modelo Document
+        document = Document(
+            filename=document_info["nombre_documento"],
+            content_type="Inferir tipo de contenido",  # Necesitas agregarlo
+            size=0,  # Necesitas agregarlo
+            gcs_path="Pendiente de subida", # Se actualizaría luego 
+            md5_hash="Pendiente de cálculo"  # Se calcularía luego
+        )
 
-@app.get("/documents/", response_model=List[DocumentBase])
-async def get_all_documents(db: AsyncSession = Depends(get_db_session)):
-    return await document_crud.get_all(db)
+        # Agrega el documento a la sesión
+        session.add(document)
+        session.commit()  
 
-@app.get("/documents/{document_id}", response_model=DocumentBase)
-async def get_document(document_id: str, db: AsyncSession = Depends(get_db_session)):
-    document = await document_crud.get(document_id, db)
-    if document is None:
-        raise HTTPException(status_code=404, detail="Document not found")
-    return document
+        logger.info(f"Documento procesado correctamente: {document.id}")
 
-@app.put("/documents/{document_id}", response_model=DocumentBase)
-async def update_document(document_id: str, update_data: DocumentCreate, db: AsyncSession = Depends(get_db_session)):
-    return await document_crud.update(document_id, update_data, db)
+    except Exception as e:
+        logger.error(f"Error al procesar el documento: {e}")
 
-@app.delete("/documents/{document_id}")
-async def delete_document(document_id: str, db: AsyncSession = Depends(get_db_session)):
-    await document_crud.delete(document_id, db)
-    return {"message": "Document deleted successfully"} 
+
+def start():
+    setup()
+    setup_logging()
+    app.start()  # Inicia Hoppy para consumir la cola 

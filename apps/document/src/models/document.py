@@ -14,6 +14,6 @@ class Document(Base):
     content_type = Column(String(255))
     size = Column(BigInteger)
     gcs_path = Column(String(1024), nullable=False)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
-    updated_at = Column(DateTime, onupdate=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.datetime.now(datetime.UTC))
+    updated_at = Column(DateTime, onupdate=datetime.datetime.now(datetime.UTC))
     md5_hash = Column(String(32)) 

@@ -15,3 +15,6 @@ class Queues(Enum):
 
     # Centralizer -> register
     REQUESTS_QUEUE = 'centralizer.requests'
+
+    #
+    DOCUMENTS_QUEUE = 'documents.document_info'
