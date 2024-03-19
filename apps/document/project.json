@@ -29,7 +29,7 @@
         "{projectRoot}/dist"
       ],
       "options": {
-        "outputPath": "apps/user/dist",
+        "outputPath": "apps/document/dist",
         "publish": false,
         "lockedVersions": true,
         "bundleLocalDependencies": true
