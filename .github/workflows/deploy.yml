@@ -60,6 +60,9 @@ jobs:
       - name: NPM install
         run: npm ci
 
+      - name: Install Nx
+        run: npm install -g nx@latest
+
       - name: Checkout
         uses: actions/checkout@v3
 
