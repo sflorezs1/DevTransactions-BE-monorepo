@@ -1,25 +1,24 @@
 import asyncio
 import logging
+from typing import Any, Generic
+from faststream import BaseMiddleware, FastStream
+from faststream.rabbit import RabbitBroker
+from src.adapter import GovCarpetaAPIAdapter
+from .config import DEBUG, RABBITMQ_URL
 
-from hoppy import Hoppy, SQLAlchemyParams, PikaParams, Event, Queues, RegisterUserPayload, Context
-
+from queues.queues import CentralizerRequest, CentralizerRequestType, CentralizerResponse, Queues, RegisterUser
 
 logger = logging.getLogger(__name__)
 
-def setup():
-    # PikaParams declaration with default values
-    pika_params = PikaParams(
-        host = "localhost",
-        port = 5672,
-    )
+broker = RabbitBroker(RABBITMQ_URL)
 
-    # Create the Hoppy instance
-    global app
-    app = Hoppy(pika_params)
+app = FastStream(broker)
 
 def setup_logging():
     # Set the logging level for the root logger to DEBUG
-    logging.getLogger().setLevel(logging.DEBUG)
+    if DEBUG: 
+        logging.getLogger().setLevel(logging.DEBUG)
+        logging.getLogger("aiormq.connection").setLevel(logging.WARNING)
 
     # Create a console handler
     console_handler = logging.StreamHandler()
@@ -36,19 +35,30 @@ def setup_logging():
     # Add the console handler to the root logger
     logging.getLogger().addHandler(console_handler)
 
-def register_consumers():
-    # Register the consumer for the user creation event
-    @app.consume(Queues.REGISTER_CITIZEN)
-    async def handle_citizen_registration(event: Event, context: Context):
-        logger.info(f"Received user creation event: {event.body}")
-        user_data = event.body   # type: RegisterUserPayload
-        
-        logger.info(f"User data: {user_data}")
+@broker.subscriber(Queues.REQUESTS_QUEUE.value)
+async def handle_request(msg: CentralizerRequest):
+    adapter = GovCarpetaAPIAdapter()
+    match msg.type:
+        case CentralizerRequestType.VALIDATE_CITIZEN:
+            logger.info(f"Received request to validate citizen: {msg.payload}")
+            response = await adapter.validate_citizen(msg.payload["id"])
+
+        case CentralizerRequestType.REGISTER_CITIZEN:
+            logger.info(f"Received request to register citizen: {msg.payload}")
+            response = await adapter.register_citizen(msg.payload)
+            
+        case "delete_user":
+            logger.info(f"Received request to delete user: {msg.payload}")
+            response = await adapter.unregister_citizen(msg.payload)
+            
+        case _:
+            logger.warning(f"Received unknown request type: {msg.type}")
+    await broker.publish(CentralizerResponse(
+        status=response["status"],
+        message=response["data"],
+        original_payload=msg.payload,
+    ), msg.reply_to)
 
 def start():
-    setup()
     setup_logging()
-    # Register the consumers
-    register_consumers()
-    # Start the consumption
-    app.run()
+    asyncio.run(app.run())

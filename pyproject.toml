@@ -11,6 +11,7 @@ readme = "README.md"
 
   [tool.poetry.dependencies]
   python = "^3.12"
+  faststream = {extras = ["rabbit"], version = "^0.4.7"}
 
     [tool.poetry.dependencies.document]
     path = "apps/document"
@@ -18,10 +19,6 @@ readme = "README.md"
 
     [tool.poetry.dependencies.user]
     path = "apps/user"
-    develop = true
-
-    [tool.poetry.dependencies.hoppy]
-    path = "libs/hoppy"
     develop = true
 
 [tool.poetry.group.dev.dependencies]

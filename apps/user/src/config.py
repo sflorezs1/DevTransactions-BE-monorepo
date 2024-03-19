@@ -1,8 +1,11 @@
 from secret import access_secret_version
 
+DEBUG = True
+
 # RabbitMQ configuration
 RABBITMQ_HOST = access_secret_version('rabbitmq-host', 'localhost')
 RABBITMQ_PORT = int(access_secret_version('rabbitmq-port', '5672'))
+RABBITMQ_URL = f"amqp://{RABBITMQ_HOST}:{RABBITMQ_PORT}"
 
 # SQLAlchemy configuration
 SQLALCHEMY_USERNAME = access_secret_version('sqlalchemy-username', 'postgres')

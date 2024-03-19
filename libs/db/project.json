@@ -1,14 +1,14 @@
 {
-  "name": "hoppy",
+  "name": "db",
   "$schema": "../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
-  "sourceRoot": "libs/hoppy/hoppy",
+  "sourceRoot": "libs/db/db",
   "targets": {
     "lock": {
       "executor": "@nxlv/python:run-commands",
       "options": {
         "command": "poetry lock --no-update",
-        "cwd": "hoppy"
+        "cwd": "db"
       }
     },
     "add": {
@@ -29,7 +29,7 @@
         "{projectRoot}/dist"
       ],
       "options": {
-        "outputPath": "apps/hoppy/dist",
+        "outputPath": "libs/db/dist",
         "publish": false,
         "lockedVersions": true,
         "bundleLocalDependencies": true
@@ -48,21 +48,21 @@
     "lint": {
       "executor": "@nxlv/python:flake8",
       "outputs": [
-        "{workspaceRoot}/reports/hoppy/pylint.txt"
+        "{workspaceRoot}/reports/db/pylint.txt"
       ],
       "options": {
-        "outputFile": "reports/hoppy/pylint.txt"
+        "outputFile": "reports/db/pylint.txt"
       }
     },
     "test": {
       "executor": "@nxlv/python:run-commands",
       "outputs": [
-        "{workspaceRoot}/reports/hoppy/unittests",
-        "{workspaceRoot}/coverage/hoppy"
+        "{workspaceRoot}/reports/db/unittests",
+        "{workspaceRoot}/coverage/db"
       ],
       "options": {
         "command": "poetry run pytest tests/",
-        "cwd": "hoppy"
+        "cwd": "db"
       }
     }
   },

@@ -1,29 +1,25 @@
 import asyncio
 import logging
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from h11 import Response
 from pydantic import BaseModel, EmailStr
+from faststream.rabbit import RabbitBroker
 import uvicorn
 
-from hoppy import Hoppy, SQLAlchemyParams, PikaParams, Event, Queues, RegisterUserPayload, Context
+from queues.queues import CompleteRegister, Queues, RegisterUser
 
+from .config import DEBUG
 
 logger = logging.getLogger(__name__)
+broker = RabbitBroker()
 api = FastAPI()
-
-def setup():
-    # PikaParams declaration with default values
-    pika_params = PikaParams(
-        host = "localhost",
-        port = 5672,
-    )
-
-    # Create the Hoppy instance
-    global app
-    app = Hoppy(pika_params)
 
 def setup_logging():
     # Set the logging level for the root logger to DEBUG
-    logging.getLogger().setLevel(logging.DEBUG)
+    if DEBUG: 
+        logging.getLogger().setLevel(logging.DEBUG)
+        logging.getLogger("aiormq.connection").setLevel(logging.WARNING)
+
 
     # Create a console handler
     console_handler = logging.StreamHandler()
@@ -40,35 +36,25 @@ def setup_logging():
     # Add the console handler to the root logger
     logging.getLogger().addHandler(console_handler)
 
-
-class RegisterUser(BaseModel):
-    name: str
-    email: EmailStr
-    national_id: int
-    address: str
-    operator_id: str
-    operator_name: str
-
-class CompleteRegister(BaseModel):
-    email: EmailStr
-    password: str
-
 @api.post("/user/start_register")
 async def start_register(user: RegisterUser):
-    async with app:
-        reply_queue = await app.send_message(Queues.START_USER_REGISTER, user.model_dump(), True)
-        response = await app.consume_once_and_destroy(reply_queue)
-    return response
+    try:
+        response = None
+        async with broker:
+            response = await broker.publish(user, Queues.START_USER_REGISTER.value, rpc=True)
+            logger.info(f"{response=}")
+        return response
+    except Exception as e:
+        raise HTTPException(500, "Internal server error")
 
 @api.post("/user/complete_register")
 async def start_register(info: CompleteRegister):
-    async with app:
-        reply_queue = await app.send_message(Queues.CREATE_USER_PASSWORD, info.model_dump(), True)
-        response = await app.consume_once_and_destroy(reply_queue)
+    response = None
+    with broker:
+        response = await broker.publish(info, Queues.CREATE_USER_PASSWORD, rpc=True)
     return response
 
 def start():
-    setup()
     setup_logging()
     # Start the consumption
     uvicorn.run(api, host="0.0.0.0", port=8000)

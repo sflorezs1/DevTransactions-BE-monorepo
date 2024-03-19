@@ -1,60 +1,44 @@
-from .config import API_KEY, SUPPORT_EMAIL
-import requests
-import json
+import logging
+from .config import SUPPORT_EMAIL, API_KEY
+from mailersend import emails
+
+logger = logging.getLogger(__name__)
 
 
-import aiohttp
-import asyncio
+def send_template_email(to_name, to_email, template_id, template_data, subject):
+    mailer = emails.NewEmail(API_KEY.replace("\n", ""))
 
+    # define an empty dict to populate with mail values
+    mail_body = {}
 
-async def send_email(to_email, subject, text):
-    url = "https://api.mailersend.com/v1/email"
-
-    headers = {
-        "Content-Type": "application/json",
-        "X-Requested-With": "XMLHttpRequest",
-        "Authorization": f"Bearer {API_KEY}"
+    mail_from = {
+        "name": "Dev Transactions Team",
+        "email": SUPPORT_EMAIL.replace("\n", ""),
     }
 
-    data = {
-        "from": {
-            "email": SUPPORT_EMAIL
-        },
-        "to": [
-            {
-                "email": to_email
+    recipients = [
+        {
+            "name": to_name,
+            "email": to_email,
+        }
+    ]
+
+    variables = [
+        {
+            "email": to_email,
+            "data": { 
+                **template_data,
+                "account_name": "Dev Transactions"
             }
-        ],
-        "subject": subject,
-        "text": text
-    }
+        }
+    ]
 
-    async with aiohttp.ClientSession() as session:
-        async with session.post(url, headers=headers, data=json.dumps(data)) as response:
-            return response.status
+    mailer.set_mail_from(mail_from, mail_body)
+    mailer.set_mail_to(recipients, mail_body)
+    mailer.set_subject(subject, mail_body)
+    mailer.set_template(template_id, mail_body)
+    mailer.set_advanced_personalization(variables, mail_body)
 
-async def send_template_email(to_email, template_id, template_data):
-    url = "https://api.mailersend.com/v1/email"
+    logger.info(f"Sending email {mail_body}")
 
-    headers = {
-        "Content-Type": "application/json",
-        "X-Requested-With": "XMLHttpRequest",
-        "Authorization": f"Bearer {API_KEY}"
-    }
-
-    data = {
-        "from": {
-            "email": SUPPORT_EMAIL
-        },
-        "to": [
-            {
-                "email": to_email
-            }
-        ],
-        "template_id": template_id,
-        "variables": template_data
-    }
-
-    async with aiohttp.ClientSession() as session:
-        async with session.post(url, headers=headers, data=json.dumps(data)) as response:
-            return response.status
+    mailer.send(mail_body)

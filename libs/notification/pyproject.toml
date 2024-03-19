@@ -15,6 +15,7 @@ readme = "README.md"
   [tool.poetry.dependencies]
   python = "^3.12"
   aiohttp = "^3.9.3"
+  mailersend = "^0.5.6"
 
     [tool.poetry.dependencies.secret]
     path = "../secret"
