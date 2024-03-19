@@ -57,9 +57,6 @@ jobs:
           cluster_name: ${{ env.GKE_CLUSTER }}
           location: ${{ env.GKE_REGION }}
 
-      - name: Install Nx
-        run: npm install -g nx
-
       - name: NPM install
         run: npm ci
 
