@@ -1,0 +1,54 @@
+[1m./hoppy/__init__.py[m[36m:[m2[36m:[m1[36m:[m [1m[31mF401[m '.hoppy.Hoppy' imported but unused
+[1m./hoppy/__init__.py[m[36m:[m2[36m:[m1[36m:[m [1m[31mF401[m '.hoppy.PikaParams' imported but unused
+[1m./hoppy/__init__.py[m[36m:[m2[36m:[m1[36m:[m [1m[31mF401[m '.hoppy.SQLAlchemyParams' imported but unused
+[1m./hoppy/__init__.py[m[36m:[m2[36m:[m1[36m:[m [1m[31mF401[m '.hoppy.Context' imported but unused
+[1m./hoppy/__init__.py[m[36m:[m3[36m:[m1[36m:[m [1m[31mF401[m '.queues.Queues' imported but unused
+[1m./hoppy/__init__.py[m[36m:[m4[36m:[m1[36m:[m [1m[31mF401[m '.event.Event' imported but unused
+[1m./hoppy/__init__.py[m[36m:[m4[36m:[m1[36m:[m [1m[31mF401[m '.event.RegisterUserPayload' imported but unused
+[1m./hoppy/__init__.py[m[36m:[m4[36m:[m1[36m:[m [1m[31mF401[m '.event.TransferUserPayload' imported but unused
+[1m./hoppy/__init__.py[m[36m:[m4[36m:[m67[36m:[m [1m[31mW292[m no newline at end of file
+[1m./hoppy/event.py[m[36m:[m5[36m:[m1[36m:[m [1m[31mF401[m 'aio_pika.abc.AbstractIncomingMessage' imported but unused
+[1m./hoppy/event.py[m[36m:[m6[36m:[m1[36m:[m [1m[31mF401[m 'typing.Generic' imported but unused
+[1m./hoppy/event.py[m[36m:[m24[36m:[m1[36m:[m [1m[31mE302[m expected 2 blank lines, found 1
+[1m./hoppy/event.py[m[36m:[m33[36m:[m1[36m:[m [1m[31mE302[m expected 2 blank lines, found 1
+[1m./hoppy/event.py[m[36m:[m37[36m:[m1[36m:[m [1m[31mE302[m expected 2 blank lines, found 1
+[1m./hoppy/event.py[m[36m:[m41[36m:[m1[36m:[m [1m[31mE302[m expected 2 blank lines, found 1
+[1m./hoppy/event.py[m[36m:[m55[36m:[m1[36m:[m [1m[31mE302[m expected 2 blank lines, found 1
+[1m./hoppy/event.py[m[36m:[m61[36m:[m1[36m:[m [1m[31mW293[m blank line contains whitespace
+[1m./hoppy/event.py[m[36m:[m76[36m:[m37[36m:[m [1m[31mW292[m no newline at end of file
+[1m./hoppy/hoppy.py[m[36m:[m3[36m:[m1[36m:[m [1m[31mF401[m 'dataclasses.dataclass' imported but unused
+[1m./hoppy/hoppy.py[m[36m:[m4[36m:[m1[36m:[m [1m[31mF401[m 'email.message' imported but unused
+[1m./hoppy/hoppy.py[m[36m:[m7[36m:[m1[36m:[m [1m[31mF401[m 'queue' imported but unused
+[1m./hoppy/hoppy.py[m[36m:[m8[36m:[m1[36m:[m [1m[31mF401[m 'ssl' imported but unused
+[1m./hoppy/hoppy.py[m[36m:[m9[36m:[m1[36m:[m [1m[31mF401[m 'typing.Any' imported but unused
+[1m./hoppy/hoppy.py[m[36m:[m9[36m:[m1[36m:[m [1m[31mF401[m 'typing.NamedTuple' imported but unused
+[1m./hoppy/hoppy.py[m[36m:[m9[36m:[m1[36m:[m [1m[31mF401[m 'typing.Type' imported but unused
+[1m./hoppy/hoppy.py[m[36m:[m10[36m:[m1[36m:[m [1m[31mF401[m 'urllib.parse.quote' imported but unused
+[1m./hoppy/hoppy.py[m[36m:[m41[36m:[m1[36m:[m [1m[31mE302[m expected 2 blank lines, found 1
+[1m./hoppy/hoppy.py[m[36m:[m57[36m:[m1[36m:[m [1m[31mW293[m blank line contains whitespace
+[1m./hoppy/hoppy.py[m[36m:[m64[36m:[m21[36m:[m [1m[31mE231[m missing whitespace after ':'
+[1m./hoppy/hoppy.py[m[36m:[m64[36m:[m35[36m:[m [1m[31mE231[m missing whitespace after ':'
+[1m./hoppy/hoppy.py[m[36m:[m66[36m:[m1[36m:[m [1m[31mW293[m blank line contains whitespace
+[1m./hoppy/hoppy.py[m[36m:[m84[36m:[m36[36m:[m [1m[31mE231[m missing whitespace after ':'
+[1m./hoppy/hoppy.py[m[36m:[m84[36m:[m54[36m:[m [1m[31mE231[m missing whitespace after ':'
+[1m./hoppy/hoppy.py[m[36m:[m84[36m:[m82[36m:[m [1m[31mE231[m missing whitespace after ':'
+[1m./hoppy/hoppy.py[m[36m:[m105[36m:[m121[36m:[m [1m[31mE501[m line too long (132 > 120 characters)
+[1m./hoppy/hoppy.py[m[36m:[m116[36m:[m23[36m:[m [1m[31mF811[m redefinition of unused 'queue' from line 7
+[1m./hoppy/hoppy.py[m[36m:[m117[36m:[m43[36m:[m [1m[31mW291[m trailing whitespace
+[1m./hoppy/hoppy.py[m[36m:[m119[36m:[m1[36m:[m [1m[31mW293[m blank line contains whitespace
+[1m./hoppy/hoppy.py[m[36m:[m122[36m:[m1[36m:[m [1m[31mW293[m blank line contains whitespace
+[1m./hoppy/hoppy.py[m[36m:[m123[36m:[m47[36m:[m [1m[31mW291[m trailing whitespace
+[1m./hoppy/hoppy.py[m[36m:[m136[36m:[m31[36m:[m [1m[31mF811[m redefinition of unused 'message' from line 4
+[1m./hoppy/hoppy.py[m[36m:[m157[36m:[m1[36m:[m [1m[31mW293[m blank line contains whitespace
+[1m./hoppy/hoppy.py[m[36m:[m168[36m:[m17[36m:[m [1m[31mF811[m redefinition of unused 'queue' from line 7
+[1m./hoppy/hoppy.py[m[36m:[m170[36m:[m31[36m:[m [1m[31mF402[m import 'message' from line 4 shadowed by loop variable
+[1m./hoppy/hoppy.py[m[36m:[m174[36m:[m1[36m:[m [1m[31mW293[m blank line contains whitespace
+[1m./hoppy/hoppy.py[m[36m:[m177[36m:[m34[36m:[m [1m[31mF811[m redefinition of unused 'queue' from line 7
+[1m./hoppy/hoppy.py[m[36m:[m177[36m:[m121[36m:[m [1m[31mE501[m line too long (121 > 120 characters)
+[1m./hoppy/hoppy.py[m[36m:[m194[36m:[m13[36m:[m [1m[31mF841[m local variable 'reply_queue' is assigned to but never used
+[1m./hoppy/hoppy.py[m[36m:[m195[36m:[m21[36m:[m [1m[31mE201[m whitespace after '{'
+[1m./hoppy/hoppy.py[m[36m:[m195[36m:[m66[36m:[m [1m[31mE202[m whitespace before '}'
+[1m./hoppy/hoppy.py[m[36m:[m209[36m:[m1[36m:[m [1m[31mW293[m blank line contains whitespace
+[1m./hoppy/hoppy.py[m[36m:[m216[36m:[m50[36m:[m [1m[31mW291[m trailing whitespace
+[1m./hoppy/hoppy.py[m[36m:[m221[36m:[m9[36m:[m [1m[31mF811[m redefinition of unused 'message' from line 4
+[1m./hoppy/queues.py[m[36m:[m15[36m:[m44[36m:[m [1m[31mW292[m no newline at end of file

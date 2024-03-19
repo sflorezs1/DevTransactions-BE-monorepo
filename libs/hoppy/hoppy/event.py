@@ -1,10 +1,12 @@
+from ast import parse
+from collections import namedtuple
 from dataclasses import dataclass
 import json
 import logging
 from aio_pika import IncomingMessage
 from aio_pika.abc import AbstractIncomingMessage
 from typing import Generic, TypeVar, Union
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, EmailStr, ValidationError
 from typing import Any
 
 from .queues import Queues
@@ -18,36 +20,62 @@ T = TypeVar('T', bound=Queues)
 # Define the expected body structure for each queue
 @dataclass
 class RegisterUserPayload:
+    name: str
     email: str
-    password: str
+    national_id: int
+    address: str
+    operator_id: str
+    operator_name: str
 
 @dataclass
 class TransferUserPayload:
     national_id: str
     selected_operator: str
 
+@dataclass
+class CentralizerResponsePayload:
+    status: int
+    message: str
+
+@dataclass
+class CreatePasswordPayload:
+    email: str
+    password: str
 
 # Map queue types to body types
-QueueBodyType = Union[RegisterUserPayload, TransferUserPayload]
+QueueBodyType = Union[RegisterUserPayload, TransferUserPayload, CentralizerResponsePayload]
 
 class RegisterUserContract(BaseModel):
-    email: str
+    name: str
+    email: EmailStr
+    national_id: int
+    address: str
+    operator_id: str
+    operator_name: str
+
+
+class CreatePasswordContract(BaseModel):
+    email: EmailStr
     password: str
 
 class TransferUserContract(BaseModel):
     national_id: str
     selected_operator: str
 
+class CentralizerResponsePayload(BaseModel):
+    original_payload: Any  # is a dataclass
+    status: int
+    message: str
+
 def validate_contract(queue: Queues, body: dict) -> Any:
-    return body
     try:
         match queue:
-            case Queues.REGISTER_USER:
+            case Queues.START_USER_REGISTER:
                 return RegisterUserContract.model_validate(body)
-            case Queues.TRANSFER_USER:
-                return TransferUserContract.model_validate(body)
+            case Queues.PROCESS_USER_VALIADATION:
+                return CentralizerResponsePayload.model_validate(body)
             case _:
-                raise ValueError(f"Unknown queue: {queue}")
+                logger.info(f"Will not validate payload for queue {queue} as it is not known, may be a reply queue")
     except ValidationError as e:
         print(f"Validation error for queue {queue}: {e}")
         return None
@@ -62,10 +90,11 @@ class Event:
     def _parse_body(self):
         raw_body = self.message.body
         try:
-            # Convert JSON string to object based on T
+            validate_contract(self.message.routing_key, raw_body)
             parsed_body = json.loads(self.message.body.decode())
             logger.info(f"parsed_body: {self.message.body} as {parsed_body}")
-            self.body = parsed_body
+            DynamicNamedTuple = namedtuple('DynamicNamedTuple', parsed_body.keys())
+            self.body = DynamicNamedTuple(**parsed_body)
         except json.JSONDecodeError:
             logger.warn(f"Failed to parse JSON from message body: {self.message.body}")
             self.body = None

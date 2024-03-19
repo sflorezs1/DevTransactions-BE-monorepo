@@ -29,7 +29,7 @@
         "{projectRoot}/dist"
       ],
       "options": {
-        "outputPath": "centralizer/dist",
+        "outputPath": "apps/centralizer/dist",
         "publish": false,
         "lockedVersions": true,
         "bundleLocalDependencies": true
