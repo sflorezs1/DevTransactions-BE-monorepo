@@ -4,7 +4,7 @@ from typing import Any, Generic
 from faststream import BaseMiddleware, FastStream
 from faststream.rabbit import RabbitBroker
 from src.adapter import GovCarpetaAPIAdapter
-from .config import DEBUG, RABBITMQ_URL
+from .config import DEBUG, RABBITMQ_URL, MOCK_CENTRALIZER
 
 from queues.queues import CentralizerRequest, CentralizerRequestType, CentralizerResponse, Queues, RegisterUser
 
@@ -37,6 +37,14 @@ def setup_logging():
 
 @broker.subscriber(Queues.REQUESTS_QUEUE.value)
 async def handle_request(msg: CentralizerRequest):
+    if MOCK_CENTRALIZER:
+        logger.info("Mock centralizer is enabled")
+        await broker.publish(CentralizerResponse(
+            status=204,
+            message="Mock centralizer is enabled",
+            original_payload=msg.payload,
+        ), msg.reply_to)
+        return
     adapter = GovCarpetaAPIAdapter()
     match msg.type:
         case CentralizerRequestType.VALIDATE_CITIZEN:
