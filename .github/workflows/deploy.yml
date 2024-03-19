@@ -76,6 +76,7 @@ jobs:
 
       - name: Install and build apps
         run: |
+          pwd
           nx run-many --target=build --all
 
       - name: Build and Publish
