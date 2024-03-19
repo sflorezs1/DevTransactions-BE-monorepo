@@ -159,15 +159,15 @@ def user_registration_flow(app: FastStream, broker: RabbitBroker):
             None
         """
 
-        if msg.status != 201:
-            send_declination_email(msg.original_payload)
-            return
-        
         user = (await session.execute(select(User).filter_by(email=msg.original_payload["email"]))).scalars().first()
 
         if not user:
             raise Exception("User not found")
 
+        if msg.status != 201:
+            send_declination_email(user)
+            return
+        
         send_template_email(
             to_name=user.name,
             to_email=user.email, 

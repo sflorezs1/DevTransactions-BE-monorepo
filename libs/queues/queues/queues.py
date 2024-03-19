@@ -29,6 +29,7 @@ class CompleteRegister(BaseModel):
 class CentralizerRequestType(Enum):
     VALIDATE_CITIZEN = 'validate_citizen'
     REGISTER_CITIZEN = 'register_citizen'
+    UNREGISTER_CITIZEN = 'unregister_citizen'
 
 
 class CentralizerRequest(BaseModel):

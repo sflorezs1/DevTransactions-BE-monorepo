@@ -40,11 +40,12 @@ async def handle_request(msg: CentralizerRequest):
     if MOCK_CENTRALIZER:
         logger.info("Mock centralizer is enabled")
         await broker.publish(CentralizerResponse(
-            status=204,
+            status=204 if msg.type == CentralizerRequestType.VALIDATE_CITIZEN else 201 if msg.type == CentralizerRequestType.REGISTER_CITIZEN else 200,
             message="Mock centralizer is enabled",
             original_payload=msg.payload,
         ), msg.reply_to)
         return
+    
     adapter = GovCarpetaAPIAdapter()
     match msg.type:
         case CentralizerRequestType.VALIDATE_CITIZEN:
