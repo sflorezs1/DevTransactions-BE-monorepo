@@ -3,7 +3,7 @@
 from secret.secrets import access_secret_version
 
 DEBUG = True
-MOCK_CENTRALIZER = access_secret_version('mock-centralizer') == 'True'
+MOCK_CENTRALIZER = access_secret_version('mock-centralizer').replace("\n","") == 'True'
 
 RABBITMQ_HOST = access_secret_version('rabbitmq-host', 'localhost')
 RABBITMQ_PORT = int(access_secret_version('rabbitmq-port', '5672'))

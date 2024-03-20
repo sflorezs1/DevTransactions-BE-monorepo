@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import Any, Generic, Optional, TypeVar, Union
+from uuid import UUID
 
 from pydantic import BaseModel, EmailStr
 
@@ -12,6 +13,9 @@ class Queues(Enum):
     COMPLETE_USER_REGISTER = 'user.complete_user_register'
     CREATE_USER_PASSWORD = 'user.create_user_password'
 
+    #Documents
+    UPLOAD_DOCUMENT = 'document.upload_document'
+
     # Centralizer
     REQUESTS_QUEUE = 'centralizer.requests'
 
@@ -21,6 +25,15 @@ class RegisterUser(BaseModel):
     national_id: int
     address: str
     reply_to: Optional[str] = None
+
+class UploadDocument(BaseModel):
+    id: UUID 
+    filename: str 
+    content_type: str 
+    size: int 
+    md5_hash: str 
+
+class 
 
 class CompleteRegister(BaseModel):
     email: EmailStr
