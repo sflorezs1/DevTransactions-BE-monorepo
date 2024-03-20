@@ -63,7 +63,7 @@ async def complete_register(info: CompleteRegister):
     try:
         response = None
         async with broker:
-            # response = await broker.publish(info, Queues.CREATE_USER_PASSWORD.value, rpc=True)
+            response = await broker.publish(info, Queues.CREATE_USER_PASSWORD.value, rpc=True)
             logger.info(f"{response=}")
         return response
     except Exception as e:
