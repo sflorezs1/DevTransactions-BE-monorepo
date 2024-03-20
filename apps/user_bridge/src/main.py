@@ -58,14 +58,18 @@ async def complete_register(info: CompleteRegister):
     except Exception as e:
         raise HTTPException(500, "Internal server error")
 
+class UserCredentials(BaseModel):
+    username: str
+    password: str
+
 @api.post("/user/login")
-async def complete_register(info: CompleteRegister):
+async def login(credentials: UserCredentials):
     try:
-        response = None
-        async with broker:
-            # response = await broker.publish(info, Queues.CREATE_USER_PASSWORD.value, rpc=True)
-            logger.info(f"{response=}")
-        return response
+        authenticated = await authenticate_user(credentials.username, credentials.password)
+        if authenticated:
+            return {"status": "Logged in"}
+        else:
+            raise HTTPException(401, "Invalid credentials")
     except Exception as e:
         raise HTTPException(500, "Internal server error")
 

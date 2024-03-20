@@ -46,6 +46,10 @@ group = { }
     path = "../../libs/queues"
     develop = true
 
+    [tool.poetry.dependencies.auth]
+    path = "../../libs/auth"
+    develop = true
+
   [tool.poetry.scripts]
   start = "src.main:start"
 

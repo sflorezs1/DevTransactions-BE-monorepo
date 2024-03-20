@@ -26,7 +26,6 @@ group = { }
   asyncpg = "^0.29.0"
   sqlalchemy-utils = "^0.41.1"
   alembic = "^1.13.1"
-  firebase-admin = "^6.5.0"
 
     [tool.poetry.dependencies.faststream]
     extras = [ "rabbit" ]
@@ -54,6 +53,10 @@ group = { }
 
     [tool.poetry.dependencies.db]
     path = "../../libs/db"
+    develop = true
+
+    [tool.poetry.dependencies.auth]
+    path = "../../libs/auth"
     develop = true
 
   [tool.poetry.scripts]
