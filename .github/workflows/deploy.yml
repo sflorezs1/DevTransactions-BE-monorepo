@@ -92,7 +92,6 @@ jobs:
               echo "EXPOSE 8000"
               echo "ENV PYTHONUNBUFFERED=1"
               echo "WORKDIR /app/$app-1.0.0"
-              echo "ENV PATH=\"/app/$app-1.0.0/.venv/bin:$PATH\""
               echo 'CMD ["poetry", "run", "start"]'
             } >> $dockerfile_path
             echo "Building and pushing image for: $app"
