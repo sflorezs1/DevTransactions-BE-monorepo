@@ -82,7 +82,7 @@ jobs:
             dockerfile_path="apps/$app/Dockerfile"  # Path to Dockerfile
             {
               echo 'FROM python:3.12-slim'
-              echo "WORKDIR /app"
+              echo "WORKDIR /app/$app-1.0.0"
               echo "COPY apps/$app/dist/$app-1.0.0.tar.gz /app/"
               echo "RUN pip install poetry && \\"
               echo "    tar -xf $app-1.0.0.tar.gz && rm $app-1.0.0.tar.gz && \\"
