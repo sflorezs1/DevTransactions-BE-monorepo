@@ -56,8 +56,8 @@ async def handle_request(msg: CentralizerRequest):
             logger.info(f"Received request to register citizen: {msg.payload}")
             response = await adapter.register_citizen(msg.payload)
             
-        case "delete_user":
-            logger.info(f"Received request to delete user: {msg.payload}")
+        case CentralizerRequestType.UNREGISTER_CITIZEN:
+            logger.info(f"Received request to unregister user: {msg.payload}")
             response = await adapter.unregister_citizen(msg.payload)
             
         case _:
