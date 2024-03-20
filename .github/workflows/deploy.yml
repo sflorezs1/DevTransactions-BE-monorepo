@@ -87,11 +87,12 @@ jobs:
               echo "RUN pip install poetry && \\"
               echo "    tar -xf $app-1.0.0.tar.gz && rm $app-1.0.0.tar.gz && \\"
               echo "    cd $app-1.0.0 && \\"
+              echo "    poetry config virtualenvs.create false && \\"
               echo "    poetry install --no-dev"
               echo "EXPOSE 8000"
               echo "ENV PYTHONUNBUFFERED=1"
               echo "WORKDIR /app/$app-1.0.0"
-              echo 'env PATH="/app/$app-1.0.0/.venv/bin:$PATH"'
+              echo 'ENV PATH="/app/$app-1.0.0/.venv/bin:$PATH"'
               echo 'CMD ["poetry", "run", "start"]'
             } >> $dockerfile_path
             echo "Building and pushing image for: $app"
