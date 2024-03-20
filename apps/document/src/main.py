@@ -1,47 +1,43 @@
-from typing import Annotated, List
-from fastapi import FastAPI, Depends, HTTPException
-from fastapi.concurrency import asynccontextmanager
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.ext.declarative import declarative_base
-from src.database import get_db_session, sessionmanager
-from src.schemas import DocumentBase, DocumentCreate
-import src.document.document_service as document_crud
+import asyncio
+import logging
+from faststream import BaseMiddleware, FastStream
+from faststream.rabbit import RabbitBroker
+from .config import DEBUG, RABBITMQ_URL
+from .flows.upload_document import upload_document_flow
 
-import src.models
+logger = logging.getLogger(__name__)
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """
-    Function that handles startup and shutdown events.
-    To understand more, read https://fastapi.tiangolo.com/advanced/events/
-    """
-    yield
-    if sessionmanager._engine is not None:
-        # Close the DB connection
-        await sessionmanager.close()
+broker = RabbitBroker(RABBITMQ_URL)
 
-app = FastAPI(lifespan=lifespan)
+app = FastStream(broker)
 
-@app.post("/documents/", response_model=DocumentBase)
-async def create_document(document_data: DocumentCreate, db: AsyncSession = Depends(get_db_session)):
-    return await document_crud.create(document_data, db)
+def setup_logging():
+    # Set the logging level for the root logger to DEBUG
+    if DEBUG: 
+        logging.getLogger().setLevel(logging.DEBUG)
+        logging.getLogger("aiormq.connection").setLevel(logging.WARNING)
 
-@app.get("/documents/", response_model=List[DocumentBase])
-async def get_all_documents(db: AsyncSession = Depends(get_db_session)):
-    return await document_crud.get_all(db)
+    # Create a console handler
+    console_handler = logging.StreamHandler()
 
-@app.get("/documents/{document_id}", response_model=DocumentBase)
-async def get_document(document_id: str, db: AsyncSession = Depends(get_db_session)):
-    document = await document_crud.get(document_id, db)
-    if document is None:
-        raise HTTPException(status_code=404, detail="Document not found")
-    return document
+    # Set the console handler's level to DEBUG
+    console_handler.setLevel(logging.DEBUG)
 
-@app.put("/documents/{document_id}", response_model=DocumentBase)
-async def update_document(document_id: str, update_data: DocumentCreate, db: AsyncSession = Depends(get_db_session)):
-    return await document_crud.update(document_id, update_data, db)
+    # Create a formatter
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-@app.delete("/documents/{document_id}")
-async def delete_document(document_id: str, db: AsyncSession = Depends(get_db_session)):
-    await document_crud.delete(document_id, db)
-    return {"message": "Document deleted successfully"} 
+    # Set the console handler's formatter
+    console_handler.setFormatter(formatter)
+
+    # Add the console handler to the root logger
+    logging.getLogger().addHandler(console_handler)
+
+def start():
+    setup_logging()
+    upload_document_flow(app, broker)
+    asyncio.run(app.run())
+
+
+
+
+
