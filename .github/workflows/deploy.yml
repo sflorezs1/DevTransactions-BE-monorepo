@@ -168,6 +168,7 @@ jobs:
               echo "        type: \"Utilization\""
               echo "        averageUtilization: 80"
             } >> $kubefile
+            cat $kubefile
             echo "deploying in GKE $app"
             kubectl apply -f apps/$app/deploy.yaml
           done
