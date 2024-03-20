@@ -74,7 +74,7 @@ jobs:
       - name: Install and build apps
         run: |
           pwd
-          nx run-many --target=build --affected --exclude=libs
+          nx run-many --target=build --affected --base HEAD~1 --head HEAD --exlude=libs
 
       - name: Build and Publish
         run: |
