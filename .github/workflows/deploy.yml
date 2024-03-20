@@ -84,11 +84,11 @@ jobs:
               echo 'FROM python:3.12-slim'
               echo "WORKDIR /app"
               echo "COPY apps/$app/dist/$app-1.0.0.tar.gz /app/"
-              echo "RUN tar -xf $app-1.0.0.tar.gz && rm $app-1.0.0.tar.gz"  # Unpack first
               echo "RUN pip install poetry && \\"
-              echo "  cd $app-1.0.0 && \\"  # Change directory to unpacked app
-              echo "  poetry config virtualenvs.create false && \\"  # Disable virtualenv creation
-              echo "  poetry install --no-dev"
+              echo "    tar -xf $app-1.0.0.tar.gz && rm $app-1.0.0.tar.gz && \\"
+              echo "    cd $app-1.0.0 && \\"
+              echo "    poetry config virtualenvs.create false && \\"
+              echo "    poetry install --no-dev"
               echo "EXPOSE 8000"
               echo "ENV PYTHONUNBUFFERED=1"
               echo "WORKDIR /app/$app-1.0.0"
