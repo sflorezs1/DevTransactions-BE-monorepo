@@ -82,7 +82,7 @@ jobs:
             dockerfile_path="apps/$app/Dockerfile"  # Path to Dockerfile
             {
               echo 'FROM python:3.12-slim'
-              echo "WORKDIR /app/$app-1.0.0"
+              echo "WORKDIR /app"
               echo "COPY apps/$app/dist/$app-1.0.0.tar.gz /app/"
               echo "RUN pip install poetry && \\"
               echo "    tar -xf $app-1.0.0.tar.gz && rm $app-1.0.0.tar.gz && \\"
@@ -90,6 +90,7 @@ jobs:
               echo "    poetry install --no-dev"
               echo "EXPOSE 8000"
               echo "ENV PYTHONUNBUFFERED=1"
+              echo "WORKDIR /app/$app-1.0.0"
               echo 'CMD ["poetry", "run", "start"]'
             } >> $dockerfile_path
             echo "Building and pushing image for: $app"
