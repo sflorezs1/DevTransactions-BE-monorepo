@@ -1,8 +1,6 @@
 import base64
 import json
 import logging
-from os import name
-from cryptography.fernet import Fernet
 import urllib.parse
 from faststream import Depends, FastStream
 from faststream.rabbit import RabbitBroker
