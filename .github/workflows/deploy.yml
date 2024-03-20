@@ -79,6 +79,7 @@ jobs:
       - name: Build and Publish
         run: |
           for app in $(ls apps/); do
+            dockerfile_path="apps/$app/Dockerfile"  # Path to Dockerfile
             {
               echo 'FROM python:3.12-slim'
               echo "WORKDIR /app"
