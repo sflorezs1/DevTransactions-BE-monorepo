@@ -1,3 +1,5 @@
+import base64
+import json
 import logging
 from os import name
 from cryptography.fernet import Fernet
@@ -49,14 +51,22 @@ def generate_complete_register_link(user_data) -> str:
     Returns:
         str: The complete registration link with encrypted user data.
     """
-    cipher_suite = Fernet(FERNET_CRYPTO_KEY)
-    params_string = urllib.parse.urlencode({
+    params_dict = {
         "name": user_data.name,
         "email": user_data.email,
         "national_id": user_data.national_id,
+    }
+
+    # Convert the dictionary to a JSON string
+    params_json = json.dumps(params_dict)
+
+    # Encode the JSON string as a base64 string
+    params_base64 = base64.b64encode(params_json.encode()).decode()
+
+    params_string = urllib.parse.urlencode({
+        "params": params_base64,
     })
-    encrypted_params = cipher_suite.encrypt(params_string.encode())
-    return f"{FRONT_END_URL}?params={urllib.parse.quote_plus(encrypted_params)}"
+    return f"{FRONT_END_URL}?params={urllib.parse.quote_plus(params_string)}"
 
 def user_registration_flow(app: FastStream, broker: RabbitBroker):
     @broker.subscriber(Queues.START_USER_REGISTER.value)

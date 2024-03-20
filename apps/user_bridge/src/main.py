@@ -48,11 +48,15 @@ async def start_register(user: RegisterUser):
         raise HTTPException(500, "Internal server error")
 
 @api.post("/user/complete_register")
-async def start_register(info: CompleteRegister):
-    response = None
-    with broker:
-        response = await broker.publish(info, Queues.CREATE_USER_PASSWORD, rpc=True)
-    return response
+async def complete_register(info: CompleteRegister):
+    try:
+        response = None
+        async with broker:
+            response = await broker.publish(info, Queues.CREATE_USER_PASSWORD.value, rpc=True)
+            logger.info(f"{response=}")
+        return response
+    except Exception as e:
+        raise HTTPException(500, "Internal server error")
 
 def start():
     setup_logging()
