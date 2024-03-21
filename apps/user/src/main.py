@@ -21,7 +21,7 @@ async def on_startup():
         for queue in Queues:
             await broker.declare_queue(RabbitQueue(
                 name=queue.value,
-                durable=True,
+                durable=False,
                 routing_key=queue.value,
             ))     
 
