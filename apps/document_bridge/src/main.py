@@ -102,6 +102,20 @@ async def get_document_by_id(document_id:str, user: ContextAuth = Depends(authen
 
 
 
+@api.get("/document/validate/{document_id}")
+async def get_document_by_id(document_id:str, user: ContextAuth = Depends(authenticate_token)):
+    try:
+        response = await broker.publish(
+            [{"document_id": document_id},user], Queues.VALIDATE_DOCUMENT.value, rpc=True
+        )
+        if response and "validated" in response:
+            return response["validated"]
+        else:
+            return HTTPException(404, "Documento no encontrado")
+    except Exception as e:
+        raise HTTPException(500, "Error interno del servidor")
+
+
 def start():
     setup_logging()
     # Start the consumption
