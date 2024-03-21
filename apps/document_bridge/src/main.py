@@ -1,12 +1,13 @@
 import logging
 from typing import List
+import uuid
 from auth.api_dependency import ContextAuth, authenticate_token
 from fastapi import Depends, FastAPI, HTTPException
 from faststream.rabbit import RabbitBroker
 import uvicorn
 
 from .config import RABBITMQ_URL
-from queues.queues import Queues, UploadDocument
+from queues.queues import Queues, UploadDocument, AllDocuments
 
 from .config import DEBUG
 
@@ -48,23 +49,40 @@ async def start_upload_document(document: UploadDocument, user: ContextAuth = De
         raise HTTPException(500, "Internal server error")
     
 
-# @api.get("/documents/all_documents", response_model=List[DocumentBase])
-# async def list_documents(session: AsyncSession = Depends(inject_session)):
-#     documents = await list_all_documents(session)
-#     return documents
-
-
-
-@api.get("/documents/{document_id}", response_model=UploadDocument)
-async def get_document_by_id(document_id: str):
+@api.get("/document/all_documents")
+async def list_all_documents():
     try:
         response = None
-        async with broker:
-            response = await broker.publish({ "document_id": document_id }, Queues.GET_DOCUMENT.value, rpc=True)
+        request = {}
+        async with broker:    
+            response = await broker.publish(request, Queues.GET_ALL_DOCUMENTS.value,rpc=True)
             logger.info(f"{response=}")
-        return response
+        if response and "documents" in response:
+            return response["documents"]  
+        else:
+            return []
     except Exception as e:
         raise HTTPException(500, "Internal server error")
+
+    # if response and "documents" in response:
+    #     return [Document(**document) for document in response["documents"]]
+    # else:
+    #     return []   
+    
+
+@api.get("/document/{document_id}")
+async def get_document_by_id(document_id:str):
+    
+    try:
+        response = await broker.publish(
+            {"document_id": document_id}, Queues.GET_DOCUMENT_BY_ID.value, rpc=True
+        )
+        if response and "document" in response:
+            return response["document"]
+        else:
+            return HTTPException(404, "Documento no encontrado")
+    except Exception as e:
+        raise HTTPException(500, "Error interno del servidor")
 
 def start():
     setup_logging()

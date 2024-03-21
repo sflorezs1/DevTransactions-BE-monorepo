@@ -17,7 +17,8 @@ class Queues(Enum):
 
     # Document
     UPLOAD_DOCUMENT = 'document.upload_document'
-
+    GET_ALL_DOCUMENTS = 'document.get_all_documents'
+    GET_DOCUMENT_BY_ID = 'document.get_document_by_id'
     #Request
     START_USER_TRANSFER = 'user.start_user_transfer'
     COMPLETE_USER_TRANSFER = 'user.complete_user_transfer' 
@@ -54,3 +55,11 @@ class CentralizerResponse(BaseModel):
     status: int
     message: Optional[Union[str, dict]]
     original_payload: Any
+
+class AllDocuments(BaseModel):
+    filename: str 
+    content_type: str 
+    size: int 
+    md5_hash: str
+    gcs_path: str
+    gcs_key: str
