@@ -104,7 +104,8 @@ def user_registration_flow(app: FastStream, broker: RabbitBroker):
             reply_to = Queues.PROCESS_USER_VALIADATION.value
         )
 
-        await broker.publish(validate_citizen_payload, Queues.REQUESTS_QUEUE.value)
+        async with broker:
+            await broker.publish(validate_citizen_payload, Queues.REQUESTS_QUEUE.value)
 
         logger.info(f"Sending response to requestor {msg.reply_to}")
 
@@ -136,20 +137,20 @@ def user_registration_flow(app: FastStream, broker: RabbitBroker):
         match msg.status:
             case 204: 
                 # User is not registered
-                register_citizen_payload = CentralizerRequest(
-                    type=CentralizerRequestType.REGISTER_CITIZEN,
-                    payload={
-                        "id": user.national_id,
-                        "name": user.name,
-                        "email": user.email,
-                        "address": user.address,
-                        "operator_id": OPERATOR_ID,
-                        "operator_name": OPERATOR_NAME,
-                        "reply_to": Queues.COMPLETE_USER_REGISTER.value,
-                    },
-                    reply_to=Queues.COMPLETE_USER_REGISTER.value
-                )
-                await broker.publish(register_citizen_payload, Queues.REQUESTS_QUEUE.value)
+                async with broker:
+                    register_citizen_payload = CentralizerRequest(
+                        type=CentralizerRequestType.REGISTER_CITIZEN,
+                        payload={
+                            "id": user.national_id,
+                            "name": user.name,
+                            "email": user.email,
+                            "address": user.address,
+                            "operator_id": OPERATOR_ID,
+                            "operator_name": OPERATOR_NAME,
+                        },
+                        reply_to=Queues.COMPLETE_USER_REGISTER.value
+                    )
+                    await broker.publish(register_citizen_payload, Queues.REQUESTS_QUEUE.value)
             case _:
                 send_declination_email(user)
                 await session.delete(user)
