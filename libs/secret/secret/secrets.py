@@ -2,7 +2,6 @@ import os
 from google.cloud import secretmanager
 from .config import PROJECT_ID
 
-
 def access_secret_version(secret_id: str, default_value: str = None, version_id: str = 'latest'):
     env = os.getenv('ENV', 'dev')
     if env != 'prod' and default_value is not None:
