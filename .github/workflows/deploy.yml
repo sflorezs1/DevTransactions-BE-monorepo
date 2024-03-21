@@ -80,12 +80,13 @@ jobs:
           
       - name: Run migrations
         run: |
+          export ENV=prod
           for app in $(ls apps/); do
             if [ -d "apps/$app/alembic" ]; then
-              poetry install
-              source .venv/bin/activate
               echo "Running migrations for $app"
               cd apps/$app 
+              poetry install
+              source .venv/bin/activate
               poetry run alembic upgrade head
               deactivate
               cd ../..
