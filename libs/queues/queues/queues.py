@@ -22,7 +22,8 @@ class Queues(Enum):
     # Document
     UPLOAD_DOCUMENT = 'document.upload_document'
     ADD_USER_TRANSFER_DOCS_INFO = 'user.add_user_transfer_docs_info'
-
+    GET_ALL_DOCUMENTS = 'document.get_all_documents'
+    GET_DOCUMENT_BY_ID = 'document.get_document_by_id'
     # Request
     START_USER_TRANSFER = 'user.start_user_transfer'
     COMPLETE_USER_TRANSFER = 'user.complete_user_transfer' 
@@ -93,3 +94,11 @@ class TransferUserPayload(BaseModel):
 
 class CompleteTransferPayload(BaseModel):
     user_id: int
+
+class AllDocuments(BaseModel):
+    filename: str 
+    content_type: str 
+    size: int 
+    md5_hash: str
+    gcs_path: str
+    gcs_key: str

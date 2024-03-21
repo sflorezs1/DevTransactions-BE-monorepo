@@ -1,6 +1,8 @@
 import datetime
 import logging
 import uuid
+
+from src.config import RABBITMQ_URL
 from auth.api_dependency import ContextAuth
 from cryptography.fernet import Fernet
 from faststream import Depends, FastStream
@@ -41,17 +43,27 @@ def upload_document_flow(app: FastStream, broker: RabbitBroker):
             "url": url
         }
     
+def get_all_document_flow(app: FastStream, broker: RabbitBroker):
+    @broker.subscriber(Queues.GET_ALL_DOCUMENTS.value)
+    async def handle_get_all_documents(session: AsyncSession = Depends(inject_session)):
+        documents = await list_all_documents(session)
+        await broker.publish(documents, Queues.GET_ALL_DOCUMENTS.value) 
+
+    
 async def list_all_documents(session: AsyncSession = Depends(inject_session)):
-    
     result = await session.execute(select(Document))
-    documents = result.scalars().all()  
-    return documents
+    documents = result.scalars().all()
+    documents_list = [document.__dict__ for document in documents]
 
-async def get_document_by_id(session: AsyncSession, document_id: uuid.UUID) -> Document:
-    
-    result = await session.execute(select(Document).where(Document.id == document_id))
-    document = result.scalar_one_or_none()
-    return document
+    return {"documents": documents_list}  # Devolvemos la lista encapsulada
 
-#Endpoint para :Falta el flujo para mostrar un archivo (Listar todos los archivos de base de datos)
-#Otro que por el id del archivo devuelve un url de vista temporal (30 min)
+def get_document_by_id_flow(app: FastStream, broker: RabbitBroker):
+    @broker.subscriber(Queues.GET_DOCUMENT_BY_ID.value)
+    async def handle_get_document_by_id(session: AsyncSession, document_id: str):
+        
+        document = await session.execute(select(Document).where(Document.id == document_id))
+        document = document.scalar_one_or_none()
+        if document:
+            return {"document": document.__dict__}
+        else:
+            return None
