@@ -6,8 +6,9 @@ from h11 import Response
 from pydantic import BaseModel, EmailStr
 from faststream.rabbit import RabbitBroker, RabbitQueue
 import uvicorn
+from fastapi.middleware.cors import CORSMiddleware
 
-from .config import RABBITMQ_URL
+from .config import FRONT_END_URL, RABBITMQ_URL
 from queues.queues import CompleteRegister, Queues, RegisterUser
 
 from .config import DEBUG
@@ -15,6 +16,18 @@ from .config import DEBUG
 logger = logging.getLogger(__name__)
 broker = RabbitBroker(RABBITMQ_URL)
 api = FastAPI()
+
+origins = [
+    FRONT_END_URL
+]
+
+api.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @api.get('/')
 def health_check():

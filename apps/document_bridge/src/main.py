@@ -5,8 +5,9 @@ from auth.api_dependency import ContextAuth, authenticate_token
 from fastapi import Depends, FastAPI, HTTPException
 from faststream.rabbit import RabbitBroker, RabbitQueue
 import uvicorn
+from fastapi.middleware.cors import CORSMiddleware
 
-from .config import RABBITMQ_URL
+from .config import RABBITMQ_URL, FRONT_END_URL
 from queues.queues import Queues, UploadDocument, AllDocuments
 
 from .config import DEBUG
@@ -14,6 +15,18 @@ from .config import DEBUG
 logger = logging.getLogger(__name__)
 broker = RabbitBroker(RABBITMQ_URL)
 api = FastAPI()
+
+origins = [
+    FRONT_END_URL
+]
+
+api.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @api.get('/')
 def health_check():
