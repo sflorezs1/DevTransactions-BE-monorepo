@@ -7,7 +7,7 @@ from pydantic import BaseModel, EmailStr
 from faststream.rabbit import RabbitBroker, RabbitQueue
 import uvicorn
 
-from config import RABBITMQ_URL
+from .config import RABBITMQ_URL
 from queues.queues import Queues, TransferRequestPayload, TransferUserCammelPayload
 from auth.api_dependency import authenticate_token
 
