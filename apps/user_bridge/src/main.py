@@ -18,7 +18,7 @@ broker = RabbitBroker(RABBITMQ_URL)
 api = FastAPI()
 
 origins = [
-    FRONT_END_URL
+    '*'
 ]
 
 api.add_middleware(
