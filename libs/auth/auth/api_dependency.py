@@ -23,11 +23,12 @@ async def authenticate_token(token: str = Depends(oauth2_scheme)) -> Optional[Co
     Raises:
         HTTPException: If the token is invalid.
     """
-    return {
-        "localId":"Pc de Pola",
-        "email":"polainas@yopmail.com",
-        "displayName": "Pola"
-    }
+    return ContextAuth(
+        email= "polainas@jopmail.com",
+        displayName= "Pola"
+    )
+
+
     url = f"https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={FIREBASE_API_KEY}"
     data = {"idToken": token}
     async with aiohttp.ClientSession() as session:

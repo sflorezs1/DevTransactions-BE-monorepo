@@ -53,9 +53,8 @@ async def start_upload_document(document: UploadDocument, user: ContextAuth = De
 async def list_all_documents(user: ContextAuth = Depends(authenticate_token)):
     try:
         response = None
-        request = {}
         async with broker:    
-            response = await broker.publish([request, user], Queues.GET_ALL_DOCUMENTS.value,rpc=True)
+            response = await broker.publish(user, Queues.GET_ALL_DOCUMENTS.value,rpc=True)
             logger.info(f"{response=}")
         if response and "documents" in response:
             return response["documents"]  
@@ -64,30 +63,46 @@ async def list_all_documents(user: ContextAuth = Depends(authenticate_token)):
     except Exception as e:
         raise HTTPException(500, "Internal server error")
 
-    # if response and "documents" in response:
-    #     return [Document(**document) for document in response["documents"]]
-    # else:
-    #     return []   
-    
-
 @api.get("/document/{document_id}")
 async def get_document_by_id(document_id:str, user: ContextAuth = Depends(authenticate_token)):
-    
+    logger.debug(f"Procesando solicitud para document_id: {document_id}")
     try:
-        response = await broker.publish(
-            [{"document_id": document_id},user], Queues.GET_DOCUMENT_BY_ID.value, rpc=True
-        )
+        async with broker:    
+            logger.debug(f"Mensaje enviado a RabbitMQ: {str({"document_id": document_id, "user": user})} ")
+            response = await broker.publish(
+                [document_id,user], Queues.GET_DOCUMENT_BY_ID.value, rpc=True
+            )
+            logger.debug("Respuesta recibida de RabbitMQ")
         if response and "document" in response:
             return response["document"]
         else:
             return HTTPException(404, "Documento no encontrado")
     except Exception as e:
+        logger.error(f"Error interno del servidor: {str(e)}")
         raise HTTPException(500, "Error interno del servidor")
+
+@api.get("/document/{document_id}")
+async def get_document_by_id(document_id:str, user: ContextAuth = Depends(authenticate_token)):
+    logger.debug(f"Procesando solicitud para document_id: {document_id}")
+    try:
+        async with broker:    
+            logger.debug(f"Mensaje enviado a RabbitMQ: {str({"document_id": document_id, "user": user})} ")
+            response = await broker.publish(
+                [document_id,user], Queues.GET_DOCUMENT_BY_ID.value, rpc=True
+            )
+            logger.debug("Respuesta recibida de RabbitMQ")
+        if response and "document" in response:
+            return response["document"]
+        else:
+            return HTTPException(404, "Documento no encontrado")
+    except Exception as e:
+        logger.error(f"Error interno del servidor: {str(e)}")
+        raise HTTPException(500, "Error interno del servidor")
+
+
+
 
 def start():
     setup_logging()
     # Start the consumption
     uvicorn.run(api, host="0.0.0.0", port=8000)
-
-
-    
