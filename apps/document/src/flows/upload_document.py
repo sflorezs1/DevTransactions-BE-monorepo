@@ -11,7 +11,7 @@ from faststream.rabbit import RabbitBroker
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 from ..config import SQLALCHEMY_DATABASE_URI
-from queues.queues import  OperatorInfo, Queues, TransferFilePayload, TransferUserPayload, UploadDocument
+from queues.queues import  CentralizerRequest, CentralizerRequestType, OperatorInfo, Queues, TransferFilePayload, TransferUserPayload, UploadDocument
 from db.db import get_db_dependency
 from ..models.document import Document
 from ..document.adapter import GCPStorageAdapter
@@ -95,3 +95,34 @@ def operator_transfer_add_files(app: FastStream, broker: RabbitBroker):
 
         async with broker:
             await broker.publish([transfer_payload, operator_info], Queues.COMPLETE_USER_TRANSFER.value)
+
+def validate_document(app: FastStream, broker: RabbitBroker):
+    @broker.subscriber(Queues.ADD_USER_TRANSFER_DOCS_INFO.value)
+    async def handle_validate_document(document_id: str, auth: ContextAuth, session: AsyncSession = Depends(inject_session)):
+        
+        document = await session.execute(select(Document).where(Document.id == document_id, and_(Document.email==auth.email)))
+        document = document.scalar_one_or_none()
+        adapter = GCPStorageAdapter()
+        url = adapter.generate_presigned_get_url(document.gcs_path, expiration=datetime.timedelta(minutes=10))
+
+        async with broker:
+            user = await broker.publish(auth.id, Queues.GET_USER.value, rpc=True)
+
+        centralizer_payload = CentralizerRequest(
+            type=CentralizerRequestType.VALIDATE_DOCUMENT,
+            payload={
+                "idCard": user["national_id"],
+                "urlDocument": url,
+                "documentTitle": document.filename
+            }
+        )
+
+        async with broker:
+            response = await broker.publish(centralizer_payload, Queues.REQUESTS_QUEUE.value, rpc=True)
+
+        if response and "status" in response and response["status"] == 200:
+            return {
+                "validated": True
+            }
+        else:
+            return None

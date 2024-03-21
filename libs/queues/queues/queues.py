@@ -1,5 +1,4 @@
 from enum import Enum
-import operator
 from typing import Any, Generic, List, Optional, TypeVar, Union
 
 from pydantic import BaseModel, EmailStr
@@ -21,12 +20,15 @@ class Queues(Enum):
 
     # Document
     UPLOAD_DOCUMENT = 'document.upload_document'
-    ADD_USER_TRANSFER_DOCS_INFO = 'user.add_user_transfer_docs_info'
+    ADD_USER_TRANSFER_DOCS_INFO = 'document.add_user_transfer_docs_info'
     GET_ALL_DOCUMENTS = 'document.get_all_documents'
     GET_DOCUMENT_BY_ID = 'document.get_document_by_id'
+    VALIDATE_DOCUMENT = 'document.validate_document'
+
     # Request
-    START_USER_TRANSFER = 'user.start_user_transfer'
-    COMPLETE_USER_TRANSFER = 'user.complete_user_transfer' 
+    START_USER_TRANSFER = 'requests.start_user_transfer'
+    COMPLETE_USER_TRANSFER = 'requests.complete_user_transfer' 
+    TRANSFER_CITIZEN = 'use' 
 
 
 class RegisterUser(BaseModel):
@@ -47,6 +49,7 @@ class CentralizerRequestType(Enum):
     REGISTER_CITIZEN = 'register_citizen'
     UNREGISTER_CITIZEN = 'unregister_citizen'
     GET_OPERATORS = 'get_operators'
+    VALIDATE_DOCUMENT = 'validate_document'
 
 
 class CentralizerRequest(BaseModel):

@@ -23,7 +23,6 @@ group = { }
 
   [tool.poetry.dependencies]
   python = "^3.12"
-  fastapi = "^0.109.2"
   uvicorn = "^0.27.1"
   sqlalchemy = "^2.0.27"
   asyncpg = "^0.29.0"
@@ -50,8 +49,12 @@ group = { }
     path = "../../libs/secret"
     develop = true
 
-[tool.poetry.scripts]
-start = "src.main:start"
+    [tool.poetry.dependencies.auth]
+    path = "../../libs/auth"
+    develop = true
+
+  [tool.poetry.scripts]
+  start = "src.main:start"
 
 [build-system]
 requires = [ "poetry-core" ]

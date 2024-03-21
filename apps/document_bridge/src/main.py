@@ -83,14 +83,14 @@ async def get_document_by_id(document_id:str, user: ContextAuth = Depends(authen
 
 @api.get("/document/{document_id}")
 async def get_document_by_id(document_id:str, user: ContextAuth = Depends(authenticate_token)):
-    logger.debug(f"Procesando solicitud para document_id: {document_id}")
+    logger.info(f"Procesando solicitud para document_id: {document_id}")
     try:
         async with broker:    
-            logger.debug(f"Mensaje enviado a RabbitMQ: {str({"document_id": document_id, "user": user})} ")
+            logger.info(f"Mensaje enviado a RabbitMQ: {str({"document_id": document_id, "user": user})} ")
             response = await broker.publish(
                 [document_id,user], Queues.GET_DOCUMENT_BY_ID.value, rpc=True
             )
-            logger.debug("Respuesta recibida de RabbitMQ")
+            logger.info("Respuesta recibida de RabbitMQ")
         if response and "document" in response:
             return response["document"]
         else:
@@ -98,16 +98,15 @@ async def get_document_by_id(document_id:str, user: ContextAuth = Depends(authen
     except Exception as e:
         logger.error(f"Error interno del servidor: {str(e)}")
         raise HTTPException(500, "Error interno del servidor")
-
-
-
-
+    
+    
 @api.get("/document/validate/{document_id}")
 async def get_document_by_id(document_id:str, user: ContextAuth = Depends(authenticate_token)):
     try:
-        response = await broker.publish(
-            [{"document_id": document_id},user], Queues.VALIDATE_DOCUMENT.value, rpc=True
-        )
+        async with broker:
+            response = await broker.publish(
+                [document_id,user], Queues.VALIDATE_DOCUMENT.value, rpc=True
+            )
         if response and "validated" in response:
             return response["validated"]
         else:

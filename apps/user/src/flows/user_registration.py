@@ -205,3 +205,19 @@ def user_registration_flow(app: FastStream, broker: RabbitBroker):
             "message": "User password created successfully"
         })
     
+def crud_user(app: FastStream, broker: RabbitBroker):
+    @broker.subscriber(Queues.GET_USER.value)
+    async def handle_get_user(email: str, session: AsyncSession = Depends(inject_session)):
+        user = (await session.execute(select(User).filter_by(email=email))).scalar_one_or_none()
+
+        if user:
+            return {
+                "user": {
+                    "name": user.name,
+                    "email": user.email,
+                    "national_id": user.national_id,
+                    "address": user.address,
+                }
+            }
+        else:
+            return None

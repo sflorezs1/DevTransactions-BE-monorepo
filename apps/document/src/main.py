@@ -3,7 +3,7 @@ import logging
 from faststream import BaseMiddleware, FastStream
 from faststream.rabbit import RabbitBroker
 from .config import DEBUG, RABBITMQ_URL
-from .flows.upload_document import upload_document_flow,get_all_document_flow,get_document_by_id_flow
+from .flows.upload_document import operator_transfer_add_files, upload_document_flow,get_all_document_flow,get_document_by_id_flow
 
 logger = logging.getLogger(__name__)
 
@@ -37,9 +37,5 @@ def start():
     upload_document_flow(app, broker)
     get_all_document_flow(app, broker)
     get_document_by_id_flow(app, broker)
+    operator_transfer_add_files(app, broker)
     asyncio.run(app.run())
-
-
-
-
-
