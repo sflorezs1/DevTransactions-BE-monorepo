@@ -77,6 +77,15 @@ jobs:
         run: |
           nx show projects --affected --base HEAD~1 --head HEAD --type app
           nx affected --base HEAD~1 --head HEAD --target build --type app
+          
+      - name: Run migrations
+        run: |
+          for app in $(ls apps/); do
+            cd apps/$app 
+            poetry run alembic upgrade head
+            cd ../..
+          done
+
       - name: Build and Publish
         run: |
           affected=$(nx show projects --affected --base HEAD~1 --head HEAD --type app)

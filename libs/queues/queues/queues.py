@@ -4,8 +4,6 @@ from faststream.rabbit import RabbitBroker
 
 from pydantic import BaseModel, EmailStr
 
-from .config import RABBITMQ_URL
-
 class Queues(Enum):
     # User -> register
     START_USER_REGISTER = 'user.start_user_register' 
