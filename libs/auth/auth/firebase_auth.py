@@ -1,6 +1,3 @@
-import firebase_admin
-from firebase_admin import auth, credentials
-import requests
 import aiohttp
 
 from .config import FIREBASE_API_KEY
