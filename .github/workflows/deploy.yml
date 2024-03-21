@@ -176,7 +176,7 @@ jobs:
                 echo "metadata:"
                 echo "  name: $nornalized_app-service"
                 echo "spec:"
-                echo "  type: NodePort"
+                echo "  type: ClusterIP"
                 echo "  selector:"
                 echo "    app: $nornalized_app"
                 echo "  ports:"
