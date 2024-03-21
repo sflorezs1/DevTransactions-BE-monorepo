@@ -15,7 +15,7 @@ broker = RabbitBroker(RABBITMQ_URL)
 
 app = FastStream(broker)
 
-@app.on_startup()
+@app.on_startup
 async def on_startup():
     async with broker:
         for queue in Queues:
