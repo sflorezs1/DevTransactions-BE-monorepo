@@ -45,25 +45,20 @@ def upload_document_flow(app: FastStream, broker: RabbitBroker):
     
 def get_all_document_flow(app: FastStream, broker: RabbitBroker):
     @broker.subscriber(Queues.GET_ALL_DOCUMENTS.value)
-    async def handle_get_all_documents(session: AsyncSession = Depends(inject_session)):
-        documents = await list_all_documents(session)
+    async def handle_get_all_documents(auth: ContextAuth, session: AsyncSession = Depends(inject_session)):
+        documents = await session.execute(select(Document))
+        documents = documents.scalars().all()
         await broker.publish(documents, Queues.GET_ALL_DOCUMENTS.value) 
 
     
-async def list_all_documents(session: AsyncSession = Depends(inject_session)):
-    result = await session.execute(select(Document))
-    documents = result.scalars().all()
-    documents_list = [document.__dict__ for document in documents]
-
-    return {"documents": documents_list}  # Devolvemos la lista encapsulada
-
 def get_document_by_id_flow(app: FastStream, broker: RabbitBroker):
     @broker.subscriber(Queues.GET_DOCUMENT_BY_ID.value)
-    async def handle_get_document_by_id(session: AsyncSession, document_id: str):
-        
+    async def handle_get_document_by_id( document_id: str,auth: ContextAuth,session: AsyncSession = Depends(inject_session)):       
         document = await session.execute(select(Document).where(Document.id == document_id))
         document = document.scalar_one_or_none()
         if document:
             return {"document": document.__dict__}
         else:
             return None
+        
+# y lo autenticacion mirar el de subir archivo

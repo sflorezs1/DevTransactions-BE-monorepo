@@ -50,12 +50,12 @@ async def start_upload_document(document: UploadDocument, user: ContextAuth = De
     
 
 @api.get("/document/all_documents")
-async def list_all_documents():
+async def list_all_documents(user: ContextAuth = Depends(authenticate_token)):
     try:
         response = None
         request = {}
         async with broker:    
-            response = await broker.publish(request, Queues.GET_ALL_DOCUMENTS.value,rpc=True)
+            response = await broker.publish([request, user], Queues.GET_ALL_DOCUMENTS.value,rpc=True)
             logger.info(f"{response=}")
         if response and "documents" in response:
             return response["documents"]  
@@ -71,11 +71,11 @@ async def list_all_documents():
     
 
 @api.get("/document/{document_id}")
-async def get_document_by_id(document_id:str):
+async def get_document_by_id(document_id:str, user: ContextAuth = Depends(authenticate_token)):
     
     try:
         response = await broker.publish(
-            {"document_id": document_id}, Queues.GET_DOCUMENT_BY_ID.value, rpc=True
+            [{"document_id": document_id},user], Queues.GET_DOCUMENT_BY_ID.value, rpc=True
         )
         if response and "document" in response:
             return response["document"]
