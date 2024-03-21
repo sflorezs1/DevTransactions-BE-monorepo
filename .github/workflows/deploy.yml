@@ -80,11 +80,12 @@ jobs:
           
       - name: Google Cloud SQL Proxy
         run: |-
-          docker run -d --net host --name gce-cloudsql-proxy --restart on-failure --expose 5432 gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.7.0 --run-connection-test -t ${{steps.auth.outputs.access_token}} sound-machine-399502:us-central1:devtransactions-bd        
+          echo '${{ secrets.GCP_SA_KEY }}' > /tmp/credentials.json
+          docker run -d --net host --name gce-cloudsql-proxy --restart on-failure --expose 5432 gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.7.0 --run-connection-test --credentials-file /tmp/credentials.json sound-machine-399502:us-central1:devtransactions-bd        
       
       - name: Run migrations
         run: |
-          echo '${{ secrets.GCP_SA_KEY }}' >> /tmp/credentials.json
+          echo '${{ secrets.GCP_SA_KEY }}' > /tmp/credentials.json
           export GOOGLE_APPLICATION_CREDENTIALS=/tmp/credentials.json
           for app in $(ls apps/); do
             if [ -d "apps/$app/alembic" ]; then
