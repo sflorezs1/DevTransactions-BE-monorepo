@@ -81,9 +81,12 @@ jobs:
       - name: Run migrations
         run: |
           for app in $(ls apps/); do
-            cd apps/$app 
-            poetry run alembic upgrade head
-            cd ../..
+            if [ -d "apps/$app/alembic" ]; then
+              echo "Running migrations for $app"
+              cd apps/$app 
+              poetry run alembic upgrade head
+              cd ../..
+            fi
           done
 
       - name: Build and Publish
