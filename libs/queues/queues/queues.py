@@ -15,6 +15,9 @@ class Queues(Enum):
     # Centralizer
     REQUESTS_QUEUE = 'centralizer.requests'
 
+    # Document
+    UPLOAD_DOCUMENT = 'document.upload_document'
+
     #Request
     START_USER_TRANSFER = 'user.start_user_transfer'
     COMPLETE_USER_TRANSFER = 'user.complete_user_transfer' 
@@ -41,6 +44,11 @@ class CentralizerRequest(BaseModel):
     payload: dict
     reply_to: str
 
+class UploadDocument(BaseModel):
+    filename: str 
+    content_type: str 
+    size: int 
+    md5_hash: str
 
 class CentralizerResponse(BaseModel):
     status: int
