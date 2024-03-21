@@ -145,6 +145,7 @@ def user_registration_flow(app: FastStream, broker: RabbitBroker):
                         "address": user.address,
                         "operator_id": OPERATOR_ID,
                         "operator_name": OPERATOR_NAME,
+                        "reply_to": Queues.COMPLETE_USER_REGISTER.value,
                     },
                     reply_to=Queues.COMPLETE_USER_REGISTER.value
                 )
