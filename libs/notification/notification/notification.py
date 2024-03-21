@@ -35,7 +35,7 @@ def send_template_email(to_name, to_email, template_id, template_data, subject):
 
     mailer.set_mail_from(mail_from, mail_body)
     mailer.set_mail_to(recipients, mail_body)
-    mailer.set_subject(subject, mail_body)
+    subject and mailer.set_subject(subject, mail_body)
     mailer.set_template(template_id, mail_body)
     mailer.set_advanced_personalization(variables, mail_body)
 

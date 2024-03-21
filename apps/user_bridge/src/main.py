@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from auth.firebase_auth import authenticate_user
 from fastapi import FastAPI, HTTPException
 from h11 import Response
 from pydantic import BaseModel, EmailStr

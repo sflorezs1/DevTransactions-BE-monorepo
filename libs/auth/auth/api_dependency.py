@@ -8,7 +8,6 @@ from pydantic import BaseModel
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 class ContextAuth(BaseModel):
-    localId: str
     email: str
     displayName: str
 
