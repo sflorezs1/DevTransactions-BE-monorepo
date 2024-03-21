@@ -77,27 +77,6 @@ jobs:
         run: |
           nx show projects --affected --base HEAD~1 --head HEAD --type app
           nx affected --base HEAD~1 --head HEAD --target build --type app
-          
-      - name: Google Cloud SQL Proxy
-        run: |-
-          echo '${{ secrets.GCP_SA_KEY }}' > /tmp/credentials.json
-          docker run -d --net host --name gce-cloudsql-proxy --restart on-failure --expose 5432 gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.7.0 --run-connection-test --credentials-file /tmp/credentials.json sound-machine-399502:us-central1:devtransactions-bd        
-      
-      - name: Run migrations
-        run: |
-          echo '${{ secrets.GCP_SA_KEY }}' > /tmp/credentials.json
-          export GOOGLE_APPLICATION_CREDENTIALS=/tmp/credentials.json
-          for app in $(ls apps/); do
-            if [ -d "apps/$app/alembic" ]; then
-              echo "Running migrations for $app"
-              cd apps/$app 
-              poetry install
-              source .venv/bin/activate
-              poetry run alembic upgrade head
-              deactivate
-              cd ../..
-            fi
-          done
 
       - name: Build and Publish
         run: |
