@@ -1,6 +1,4 @@
 from ast import parse
-import email
-import json
 import logging
 from os import name
 from webbrowser import Opera
@@ -12,9 +10,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from notification.notification import send_template_email
-from ..models import StateEnum, User
-from auth.auth import create_user
-from ..config import FERNET_CRYPTO_KEY, FRONT_END_URL, OPERATOR_ID, OPERATOR_NAME, SQLALCHEMY_DATABASE_URI
+from ..config import SQLALCHEMY_DATABASE_URI
 from queues.queues import CentralizerRequest, CentralizerRequestType, OperatorInfo, Queues, TransferFileCamelPayload, TransferRequestPayload, TransferUserCammelPayload, TransferUserPayload
 from db.db import get_db_dependency
 import aiohttp
