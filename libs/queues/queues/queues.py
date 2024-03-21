@@ -15,6 +15,10 @@ class Queues(Enum):
     # Centralizer
     REQUESTS_QUEUE = 'centralizer.requests'
 
+    #Request
+    START_USER_TRANSFER = 'user.start_user_transfer'
+    COMPLETE_USER_TRANSFER = 'user.complete_user_transfer' 
+
 class RegisterUser(BaseModel):
     name: str
     email: EmailStr
