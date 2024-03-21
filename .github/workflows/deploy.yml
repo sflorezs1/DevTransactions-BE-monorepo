@@ -75,12 +75,12 @@ jobs:
 
       - name: Install and build apps
         run: |
-          nx show projects --affected --base HEAD~1 --head HEAD --exlude='libs/*'
+          nx show projects --exlude='libs/*'
           nx affected --base HEAD~1 --head HEAD --target build --exclude='libs/*'
 
       - name: Build and Publish
         run: |
-          affected=$(nx show projects --affected --base HEAD~1 --head HEAD --exlude='libs/*')
+          affected=$(nx show projects --exlude='libs/*')
           for app in $affected; do
             dockerfile_path="apps/$app/Dockerfile"  # Path to Dockerfile
             {
@@ -104,7 +104,7 @@ jobs:
 
       - name: Deploy GKE
         run: |
-          affected=$(nx show projects --affected --base HEAD~1 --head HEAD --exlude='libs/*')
+          affected=$(nx show projects --exlude='libs/*')
           for app in $affected; do
             nornalized_app=$(echo $app | sed 's/\_/\-/g')
             kubefile="apps/$app/deploy.yaml"  # Path to Dockerfile
