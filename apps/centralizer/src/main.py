@@ -59,14 +59,26 @@ async def handle_request(msg: CentralizerRequest):
         case CentralizerRequestType.UNREGISTER_CITIZEN:
             logger.info(f"Received request to unregister user: {msg.payload}")
             response = await adapter.unregister_citizen(msg.payload)
+
+        case CentralizerRequestType.GET_OPERATORS:  
+            logger.info(f"Received request to get operators")
+            response = await adapter.get_operators()
             
         case _:
             logger.warning(f"Received unknown request type: {msg.type}")
-    await broker.publish(CentralizerResponse(
-        status=response["status"],
-        message=response["data"],
-        original_payload=msg.payload,
-    ), msg.reply_to)
+    
+    if msg.reply_to:
+        await broker.publish(CentralizerResponse(
+            status=response["status"],
+            message=response["data"],
+            original_payload=msg.payload,
+        ), msg.reply_to)
+    else:
+        return CentralizerResponse(
+            status=response["status"],
+            message=response["data"],
+            original_payload=msg.payload,
+        )
 
 def start():
     setup_logging()

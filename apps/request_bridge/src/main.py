@@ -1,12 +1,14 @@
 import asyncio
 import logging
-from fastapi import FastAPI, HTTPException
+from auth.api_dependency import ContextAuth
+from fastapi import Depends, FastAPI, HTTPException
 from h11 import Response
 from pydantic import BaseModel, EmailStr
 from faststream.rabbit import RabbitBroker
 import uvicorn
 
-from queues.queues import Queues, TransferUser, CompleteTransfer
+from queues.queues import Queues, TransferRequestPayload, TransferUser, CompleteTransfer
+from auth.api_dependency import authenticate_token
 
 from .config import DEBUG
 
@@ -19,7 +21,6 @@ def setup_logging():
     if DEBUG: 
         logging.getLogger().setLevel(logging.DEBUG)
         logging.getLogger("aiormq.connection").setLevel(logging.WARNING)
-
 
     # Create a console handler
     console_handler = logging.StreamHandler()
@@ -36,19 +37,19 @@ def setup_logging():
     # Add the console handler to the root logger
     logging.getLogger().addHandler(console_handler)
 
-@api.post("/request/start_request")
-async def start_request(user: TransferUser):
+@api.post("/request/start_transfer")
+async def start_transfer(request: TransferRequestPayload, auth: ContextAuth = Depends(authenticate_token)):
     try:
         response = None
         async with broker:
-            response = await broker.publish(user, Queues.START_USER_TRANSFER.value, rpc=True)
+            response = await broker.publish([request, auth], Queues.START_USER_TRANSFER.value, rpc=True)
             logger.info(f"{response=}")
         return response
     except Exception as e:
         raise HTTPException(500, "Internal server error")
 
-@api.post("/request/complete_request")
-async def complete_request(user: CompleteTransfer):
+@api.post("/request/complete_transfer")
+async def complete_request():
     try:
         response = None
         async with broker:
@@ -58,6 +59,17 @@ async def complete_request(user: CompleteTransfer):
     except Exception as e:
         raise HTTPException(500, "Internal server error")
 
+
+@api.post("/request/transfer_citizen")
+async def complete_request():
+    try:
+        response = None
+        async with broker:
+            response = await broker.publish(user, Queues.COMPLETE_USER_TRANSFER.value, rpc=True)
+            logger.info(f"{response=}")
+        return response
+    except Exception as e:
+        raise HTTPException(500, "Internal server error")
 
 
 def start():

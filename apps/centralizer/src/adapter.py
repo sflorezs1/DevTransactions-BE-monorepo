@@ -1,3 +1,4 @@
+import json
 import aiohttp
 import requests
 from .config import CENTRALIZER_BASE_URL
@@ -72,3 +73,13 @@ class GovCarpetaAPIAdapter:
                     return {"status": response.status, "data": None}
                 else:
                     return {"status": response.status, "data": await response.json()}
+    
+    async def get_operators(self):
+        """
+        Gets a list of operators.
+
+        :return: A list of Operator objects.
+        """
+        endpoint = "apis/getOperators"
+        response = await self._get(endpoint)
+        return json.loads(response["data"])

@@ -1,4 +1,5 @@
 import datetime
+import email
 import logging
 import uuid
 
@@ -10,7 +11,7 @@ from faststream.rabbit import RabbitBroker
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from ..config import SQLALCHEMY_DATABASE_URI
-from queues.queues import  Queues, UploadDocument
+from queues.queues import  OperatorInfo, Queues, TransferFilePayload, TransferUserPayload, UploadDocument
 from db.db import get_db_dependency
 from ..models.document import Document
 from ..document.adapter import GCPStorageAdapter
@@ -33,6 +34,7 @@ def upload_document_flow(app: FastStream, broker: RabbitBroker):
             size = document_info.size,
             md5_hash = document_info.md5_hash,
             gcs_path = f"{auth.email}/{document_info.filename}",
+            email = auth.email,
         )
         session.add(document)
         await session.commit()
@@ -62,3 +64,24 @@ def get_document_by_id_flow(app: FastStream, broker: RabbitBroker):
             return None
         
 # y lo autenticacion mirar el de subir archivo
+        
+def operator_transfer_add_files(app: FastStream, broker: RabbitBroker):
+    @broker.subscriber(Queues.ADD_USER_TRANSFER_DOCS_INFO.value)
+    async def handle_user_transfer_docs_info(transfer_payload: TransferUserPayload, operator_info: OperatorInfo, session: AsyncSession = Depends(inject_session)):
+        logger.info(f"Received user transfer event: {transfer_payload}")
+
+        query = await session.execute(select(Document).filter(Document.email == transfer_payload.email))
+        documents = query.scalars().all()
+
+        if not documents:
+            documents = []
+        
+        for document in documents:
+            doc = TransferFilePayload(
+                document_title=document.filename,
+                url_document=document.gcs_path
+            )
+            transfer_payload.documents.append(doc)
+
+        async with broker:
+            await broker.publish([transfer_payload, operator_info], Queues.COMPLETE_USER_TRANSFER.value)
