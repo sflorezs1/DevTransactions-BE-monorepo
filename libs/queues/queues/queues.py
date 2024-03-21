@@ -34,7 +34,7 @@ class RegisterUser(BaseModel):
     email: EmailStr
     national_id: int
     address: str
-    reply_to: Optional[str] = None = None
+    reply_to: Optional[str] = None
 
 
 class CompleteRegister(BaseModel):
