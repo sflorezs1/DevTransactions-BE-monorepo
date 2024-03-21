@@ -167,6 +167,22 @@ jobs:
               echo "      target:"
               echo "        type: \"Utilization\""
               echo "        averageUtilization: 80"
+              echo "---"
+              if [[ $app == *"bridge"* ]]; then
+                echo "---"
+                echo "apiVersion: v1"
+                echo "kind: Service"
+                echo "metadata:"
+                echo "  name: $nornalized_app-service"
+                echo "spec:"
+                echo "  type: ClusterIP"
+                echo "  selector:"
+                echo "    app: $nornalized_app"
+                echo "  ports:"
+                echo "    - protocol: TCP"
+                echo "      port: 80"
+                echo "      targetPort: 8000"
+              fi
             } >> $kubefile
             cat $kubefile
             echo "deploying in GKE $app"

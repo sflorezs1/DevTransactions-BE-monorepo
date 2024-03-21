@@ -1,8 +1,10 @@
 from enum import Enum
 from typing import Any, Generic, List, Optional, TypeVar, Union
+from faststream.rabbit import RabbitBroker
 
 from pydantic import BaseModel, EmailStr
 
+from .config import RABBITMQ_URL
 
 class Queues(Enum):
     # User -> register
@@ -27,8 +29,9 @@ class Queues(Enum):
 
     # Request
     START_USER_TRANSFER = 'requests.start_user_transfer'
+    ACK_USER_TRANSFER = 'requests.ack_user_transfer'
     COMPLETE_USER_TRANSFER = 'requests.complete_user_transfer' 
-    TRANSFER_CITIZEN = 'use' 
+    ENQUEUE_TRANSFER_CITIZEN = 'requests.enqueue_transfer_citizen' 
 
 
 class RegisterUser(BaseModel):
@@ -90,9 +93,23 @@ class TransferUserPayload(BaseModel):
     id: Optional[int] = None
     email: str
     name: Optional[str] = None
-    addres: Optional[str] = None
+    address: Optional[str] = None
     callback_url: Optional[str] = None
     files: Optional[List[TransferFilePayload]] = []
+
+
+class TransferFileCamelPayload(BaseModel):
+    documentTitle: str
+    urlDocument: str
+
+
+class TransferUserCammelPayload(BaseModel):
+    id: int
+    email: str
+    name: str
+    address: str
+    callbackUrl: Optional[str] = None
+    files: List[TransferFileCamelPayload]
 
 
 class CompleteTransferPayload(BaseModel):

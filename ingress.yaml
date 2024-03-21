@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: example-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /user-bridge
+        pathType: Prefix
+        backend:
+          service:
+            name: user-bridge-service
+            port:
+              number: 80
+      - path: /document-bridge
+        pathType: Prefix
+        backend:
+          service:
+            name: document-bridge-service
+            port:
+              number: 80
+      - path: /request-bridge
+        pathType: Prefix
+        backend:
+          service:
+            name: request-bridge-service
+            port:
+              number: 80
+

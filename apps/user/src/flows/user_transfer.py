@@ -31,7 +31,7 @@ def user_transfer_flow(app: FastStream, broker: RabbitBroker):
         
         transfer_payload.id = user.national_id
         transfer_payload.name = user.name
-        transfer_payload.addres = user.address
+        transfer_payload.address = user.address
 
         async with broker:
             await broker.publish([transfer_payload, operator_info], Queues.ADD_USER_TRANSFER_DOCS_INFO.value)

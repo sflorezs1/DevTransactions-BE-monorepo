@@ -7,7 +7,7 @@ from pydantic import BaseModel, EmailStr
 from faststream.rabbit import RabbitBroker
 import uvicorn
 
-from queues.queues import Queues, TransferRequestPayload, TransferUser, CompleteTransfer
+from queues.queues import Queues, TransferRequestPayload, TransferUserCammelPayload
 from auth.api_dependency import authenticate_token
 
 from .config import DEBUG
@@ -49,11 +49,11 @@ async def start_transfer(request: TransferRequestPayload, auth: ContextAuth = De
         raise HTTPException(500, "Internal server error")
 
 @api.post("/request/complete_transfer")
-async def complete_request():
+async def complete_request(msg):
     try:
         response = None
         async with broker:
-            response = await broker.publish(user, Queues.COMPLETE_USER_TRANSFER.value, rpc=True)
+            await broker.publish(msg, Queues.ACK_USER_TRANSFER.value)
             logger.info(f"{response=}")
         return response
     except Exception as e:
@@ -61,13 +61,15 @@ async def complete_request():
 
 
 @api.post("/request/transfer_citizen")
-async def complete_request():
+async def complete_request(payload: TransferUserCammelPayload):
     try:
         response = None
         async with broker:
-            response = await broker.publish(user, Queues.COMPLETE_USER_TRANSFER.value, rpc=True)
+            await broker.publish(payload, Queues.ENQUEUE_TRANSFER_CITIZEN.value)
             logger.info(f"{response=}")
-        return response
+        return {
+            "message": "User transfer enqueued successfully",
+        }
     except Exception as e:
         raise HTTPException(500, "Internal server error")
 

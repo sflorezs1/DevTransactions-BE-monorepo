@@ -1726,7 +1726,9 @@ develop = true
 
 [package.dependencies]
 email-validator = "^2.1.1"
+faststream = {version = "^0.4.7", extras = ["rabbit"]}
 pydantic = "^2.6.4"
+secret = {path = "../secret", develop = true}
 
 [package.source]
 type = "directory"
