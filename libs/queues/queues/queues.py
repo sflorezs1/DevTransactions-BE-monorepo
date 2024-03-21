@@ -63,9 +63,6 @@ class CentralizerRequest(BaseModel):
 
 class UploadDocument(BaseModel):
     filename: str 
-    content_type: str 
-    size: int 
-    md5_hash: str
 
 
 class TransferRequestPayload(BaseModel):

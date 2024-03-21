@@ -4,7 +4,7 @@ from auth.api_dependency import ContextAuth
 from fastapi import Depends, FastAPI, HTTPException
 from h11 import Response
 from pydantic import BaseModel, EmailStr
-from faststream.rabbit import RabbitBroker
+from faststream.rabbit import RabbitBroker, RabbitQueue
 import uvicorn
 
 from queues.queues import Queues, TransferRequestPayload, TransferUserCammelPayload
@@ -15,6 +15,20 @@ from .config import DEBUG
 logger = logging.getLogger(__name__)
 broker = RabbitBroker()
 api = FastAPI()
+
+@api.get('/')
+def health_check():
+    return {"status": "ok"}
+
+@api.on_event("startup")
+async def on_startup():
+    async with broker:
+        for queue in Queues:
+            await broker.declare_queue(RabbitQueue(
+                name=queue.value,
+                durable=True,
+                routing_key=queue.value,
+            ))
 
 def setup_logging():
     # Set the logging level for the root logger to DEBUG

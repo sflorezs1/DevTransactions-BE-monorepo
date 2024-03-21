@@ -11,10 +11,7 @@ class Document(Base):
 
     id = Column(postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     filename = Column(String(255), nullable=False)
-    content_type = Column(String(255))
-    email = Column(String(255))
-    size = Column(BigInteger)
+    email = Column(String(255), nullable=False)
     gcs_path = Column(String(1024), nullable=False)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(DateTime, onupdate=datetime.datetime.utcnow)
-    md5_hash = Column(String(32)) 

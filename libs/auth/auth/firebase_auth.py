@@ -53,7 +53,7 @@ async def authenticate_user(email: str, password: str):
     Returns:
         str: The ID token if the authentication was successful, None otherwise.
     """
-    url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={API_KEY}"
+    url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={FIREBASE_API_KEY}"
     data = {"email": email, "password": password, "returnSecureToken": True}
     async with aiohttp.ClientSession() as session:
         async with session.post(url, json=data) as response:
@@ -63,7 +63,7 @@ async def authenticate_user(email: str, password: str):
     return None
 
 async def verify_token(id_token):
-    url = f"https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={API_KEY}"
+    url = f"https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={FIREBASE_API_KEY}"
     data = {"idToken": id_token}
     async with aiohttp.ClientSession() as session:
         async with session.post(url, json=data) as response:

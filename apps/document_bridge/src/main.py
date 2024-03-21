@@ -3,7 +3,7 @@ from typing import List
 import uuid
 from auth.api_dependency import ContextAuth, authenticate_token
 from fastapi import Depends, FastAPI, HTTPException
-from faststream.rabbit import RabbitBroker
+from faststream.rabbit import RabbitBroker, RabbitQueue
 import uvicorn
 
 from .config import RABBITMQ_URL
@@ -14,6 +14,20 @@ from .config import DEBUG
 logger = logging.getLogger(__name__)
 broker = RabbitBroker(RABBITMQ_URL)
 api = FastAPI()
+
+@api.get('/')
+def health_check():
+    return {"status": "ok"}
+
+@api.on_event("startup")
+async def on_startup():
+    async with broker:
+        for queue in Queues:
+            await broker.declare_queue(RabbitQueue(
+                name=queue.value,
+                durable=True,
+                routing_key=queue.value,
+            ))
 
 def setup_logging():
     # Set the logging level for the root logger to DEBUG

@@ -1,7 +1,9 @@
 import asyncio
 import logging
 from faststream import BaseMiddleware, FastStream
-from faststream.rabbit import RabbitBroker
+from faststream.rabbit import RabbitBroker, RabbitQueue
+
+from queues.queues import Queues
 from .config import DEBUG, RABBITMQ_URL
 from .flows.upload_document import operator_transfer_add_files, upload_document_flow,get_all_document_flow,get_document_by_id_flow
 
@@ -10,6 +12,16 @@ logger = logging.getLogger(__name__)
 broker = RabbitBroker(RABBITMQ_URL)
 
 app = FastStream(broker)
+
+@app.on_startup()
+async def on_startup():
+    async with broker:
+        for queue in Queues:
+            await broker.declare_queue(RabbitQueue(
+                name=queue.value,
+                durable=True,
+                routing_key=queue.value,
+            ))
 
 def setup_logging():
     # Set the logging level for the root logger to DEBUG

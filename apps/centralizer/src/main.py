@@ -2,7 +2,7 @@ import asyncio
 import logging
 from typing import Any, Generic
 from faststream import BaseMiddleware, FastStream
-from faststream.rabbit import RabbitBroker
+from faststream.rabbit import RabbitBroker, RabbitQueue
 from src.adapter import GovCarpetaAPIAdapter
 from .config import DEBUG, RABBITMQ_URL, MOCK_CENTRALIZER
 
@@ -13,6 +13,16 @@ logger = logging.getLogger(__name__)
 broker = RabbitBroker(RABBITMQ_URL)
 
 app = FastStream(broker)
+
+@app.on_startup()
+async def on_startup():
+    async with broker:
+        for queue in Queues:
+            await broker.declare_queue(RabbitQueue(
+                name=queue.value,
+                durable=True,
+                routing_key=queue.value,
+            ))
 
 def setup_logging():
     # Set the logging level for the root logger to DEBUG
