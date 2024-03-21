@@ -34,7 +34,7 @@ api.add_middleware(
 def health_check():
     return {"status": "ok"}
 
-@api.on_event("startup")
+#@api.on_event("startup")
 async def on_startup():
     async with broker:
         for queue in Queues:

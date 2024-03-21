@@ -77,12 +77,13 @@ async def handle_request(msg: CentralizerRequest):
         case _:
             logger.warning(f"Received unknown request type: {msg.type}")
     
-    if msg.reply_to:
-        await broker.publish(CentralizerResponse(
-            status=response["status"],
-            message=response["data"],
-            original_payload=msg.payload,
-        ), msg.reply_to)
+    if msg.reply_to is not None and msg.reply_to != '':
+        async with broker:
+            await broker.publish(CentralizerResponse(
+                status=response["status"],
+                message=response["data"],
+                original_payload=msg.payload,
+            ), msg.reply_to)
     else:
         return CentralizerResponse(
             status=response["status"],

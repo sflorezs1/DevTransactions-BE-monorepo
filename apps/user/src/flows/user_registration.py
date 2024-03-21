@@ -129,7 +129,7 @@ def user_registration_flow(app: FastStream, broker: RabbitBroker):
             None
         """
         logger.info(f"Centralizer response: {msg}")
-        user = (await session.execute(select(User).filter_by(email=msg.original_payload["email"]))).scalars().first()
+        user = (await session.execute(select(User).filter(User.email==msg.original_payload["email"]))).scalars().first()
 
         if not user:
             raise Exception("User not found")
